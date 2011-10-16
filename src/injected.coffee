@@ -49,7 +49,7 @@ class LiveReloadInjected
       element.parentNode.removeChild(element) if element.parentNode
     callback()
 
-  doEnable: ({ useFallback, baseURI })->
+  doEnable: ({ useFallback, scriptURI })->
     if useFallback
       url = "#{scriptURI}?ext=Safari&extver=#{ExtVersion}&host=localhost"
       console.log "Loading LiveReload.js bundled with the browser extension..."
