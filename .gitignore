@@ -1,2 +1,4 @@
 LiveReload.safariextension/*.js
+Chrome/LiveReload/*.js
 interim/*.js
+/dist

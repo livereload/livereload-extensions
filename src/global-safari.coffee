@@ -2,7 +2,7 @@
 TabState::send = (message, data={}) ->
   @tab.page.dispatchMessage message, data
 
-TabState::isAlive = -> !!@tab.url
+TabState::bundledScriptURI = -> safari.extension.baseURI + 'livereload.js'
 
 LiveReloadGlobal.isAvailable = (tab) -> !!tab.url
 
@@ -32,6 +32,7 @@ safari.application.addEventListener 'validate', (event) ->
   Commands[event.command]?.validate?(event)
 
 safari.application.addEventListener 'message', (event) ->
+  # console.log "#{event.name}(#{JSON.stringify(event.message)})"
   switch event.name
     when 'status'
       LiveReloadGlobal.updateStatus(event.target, event.message)

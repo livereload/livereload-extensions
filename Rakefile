@@ -26,13 +26,36 @@ file 'interim/injected-safari.js' => ['src/injected-safari.coffee'] do |task|
     coffee task.name, task.prerequisites.first
 end
 
+file 'interim/injected-chrome.js' => ['src/injected-chrome.coffee'] do |task|
+    coffee task.name, task.prerequisites.first
+end
+
 file 'LiveReload.safariextension/injected.js' => ['interim/injected.js', 'interim/injected-safari.js'] do |task|
+    concat task.name, *task.prerequisites
+end
+
+file 'Chrome/LiveReload/global.js' => ['src/global.coffee'] do |task|
+    coffee task.name, task.prerequisites.first
+end
+
+file 'Chrome/LiveReload/global-chrome.js' => ['src/global-chrome.coffee'] do |task|
+    coffee task.name, task.prerequisites.first
+end
+
+file 'Chrome/LiveReload/injected.js' => ['interim/injected.js', 'interim/injected-chrome.js'] do |task|
     concat task.name, *task.prerequisites
 end
 
 
 desc "Build all files"
-task :build => ['LiveReload.safariextension/global.js', 'LiveReload.safariextension/injected.js']
+task :build => [
+    'LiveReload.safariextension/global.js',
+    'LiveReload.safariextension/global-safari.js',
+    'LiveReload.safariextension/injected.js',
+    'Chrome/LiveReload/global.js',
+    'Chrome/LiveReload/global-chrome.js',
+    'Chrome/LiveReload/injected.js',
+]
 
 desc "Upload the given build to S3"
 task :upload do |t, args|
@@ -50,5 +73,16 @@ end
 
 task :default => :build
 
-CLEAN.push *['interim/injected.js', 'interim/injected-safari.js']
-CLOBBER.push *['LiveReload.safariextension/global.js', 'LiveReload.safariextension/injected.js']
+CLEAN.push *[
+    'interim/injected.js',
+    'interim/injected-safari.js',
+    'interim/injected-chrome.js',
+]
+CLOBBER.push *[
+    'LiveReload.safariextension/global.js',
+    'LiveReload.safariextension/global-safari.js',
+    'LiveReload.safariextension/injected.js',
+    'Chrome/LiveReload/global.js',
+    'Chrome/LiveReload/global-chrome.js',
+    'Chrome/LiveReload/injected.js',
+]

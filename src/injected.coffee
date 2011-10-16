@@ -42,7 +42,7 @@ LiveReloadInjected =
 
   doEnable: ({ useFallback, baseURI })->
     if useFallback
-      url = "#{baseURI}livereload.js?ext=Safari&extver=#{@ExtVersion}&host=localhost"
+      url = "#{scriptURI}?ext=Safari&extver=#{@ExtVersion}&host=localhost"
       console.log "Loading LiveReload.js bundled with the browser extension..."
     else
       url = "http://localhost:35729/livereload.js?ext=Safari&extver=#{@ExtVersion}"
@@ -64,7 +64,7 @@ LiveReloadInjected =
 
   disable: ->
     @doDisable =>
-      @send 'status', enabled: no
+      @send 'status', enabled: no, active: no
 
   enable: (options) ->
     @doDisable =>
@@ -72,4 +72,8 @@ LiveReloadInjected =
       @send 'status', enabled: yes
 
   initialize: ->
-    @send 'status', enabled: !!@findScriptTag()
+    if @findScriptTag()
+      @send 'status', enabled: yes, active: yes
+      @hook()
+    else
+      @send 'status', enabled: no, active: no

@@ -25,7 +25,7 @@ class TabState
     @active  = no
 
   enable: (useFallback) ->
-    @send 'enable', { useFallback, baseURI: safari.extension.baseURI }
+    @send 'enable', { useFallback, scriptURI: @bundledScriptURI() }
 
   disable: ->
     @send 'disable'
@@ -58,7 +58,14 @@ LiveReloadGlobal =
   _tabs: []
 
   killZombieTabs: ->
-    @_tabs = (tabState for tabState in @_tabs when tabState.isAlive())
+    @_tabs = (tabState for tabState in @_tabs when @isAvailable(tabState.tab))
+
+  killZombieTab: (tab) ->
+    for tabState, index in @_tabs
+      if tabState.tab is tab
+        @_tabs.splice index, 1
+        return
+    return
 
   findState: (tab, create=no) ->
     for tabState in @_tabs
