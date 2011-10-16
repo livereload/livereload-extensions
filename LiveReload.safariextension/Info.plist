@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Author</key>
+	<string>Andrey Tarantsov</string>
+	<key>Builder Version</key>
+	<string>7534.51.22</string>
+	<key>CFBundleDisplayName</key>
+	<string>LiveReload</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.livereload.extensions.SafariLiveReload</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleShortVersionString</key>
+	<string>2.0.0</string>
+	<key>CFBundleVersion</key>
+	<string>2.0.0</string>
+	<key>Chrome</key>
+	<dict>
+		<key>Global Page</key>
+		<string>global.html</string>
+		<key>Toolbar Items</key>
+		<array>
+			<dict>
+				<key>Command</key>
+				<string>toggle</string>
+				<key>Identifier</key>
+				<string>toggleToolbar</string>
+				<key>Image</key>
+				<string>IconDisabled.png</string>
+				<key>Label</key>
+				<string>LiveReload</string>
+				<key>Palette Label</key>
+				<string>LiveReload</string>
+				<key>Tool Tip</key>
+				<string>Enable LiveReload on this tab</string>
+			</dict>
+		</array>
+	</dict>
+	<key>Content</key>
+	<dict>
+		<key>Scripts</key>
+		<dict>
+			<key>End</key>
+			<array>
+				<string>injected.js</string>
+			</array>
+		</dict>
+	</dict>
+	<key>Description</key>
+	<string>Browser extension for LiveReload app</string>
+	<key>ExtensionInfoDictionaryVersion</key>
+	<string>1.0</string>
+	<key>Permissions</key>
+	<dict>
+		<key>Website Access</key>
+		<dict>
+			<key>Include Secure Pages</key>
+			<true/>
+			<key>Level</key>
+			<string>All</string>
+		</dict>
+	</dict>
+	<key>Update Manifest URL</key>
+	<string>http://download.livereload.com/LiveReload-Safari-update.plist</string>
+	<key>Website</key>
+	<string>http://livereload.com/</string>
+</dict>
+</plist>
