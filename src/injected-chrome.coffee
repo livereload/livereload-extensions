@@ -1,6 +1,8 @@
 
-LiveReloadInjected.send = (message, data) ->
+LiveReloadInjected::send = (message, data) ->
   chrome.extension.sendRequest [message, data]
+
+liveReloadInjected = new LiveReloadInjected(document)
 
 chrome.extension.onRequest.addListener ([eventName, data], sender, sendResponse) ->
   # console.log "#{eventName}(#{JSON.stringify(data)})"
@@ -8,8 +10,6 @@ chrome.extension.onRequest.addListener ([eventName, data], sender, sendResponse)
     when 'alert'
       alert data
     when 'enable'
-      LiveReloadInjected.enable(data)
+      liveReloadInjected.enable(data)
     when 'disable'
-      LiveReloadInjected.disable()
-
-LiveReloadInjected.initialize()
+      liveReloadInjected.disable()

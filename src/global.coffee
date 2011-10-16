@@ -54,6 +54,10 @@ if navigator.userAgent.match(/Mac OS X/)
 else
   CannotConnectAlert = """Could not connect to LiveReload server. Please make sure that a compatible LiveReload server is running. (We recommand guard-livereload, until LiveReload 2 comes to your platform.)"""
 
+
+TheWebSocket = (WebSocket ? MozWebSocket)
+
+
 LiveReloadGlobal =
   _tabs: []
 
@@ -120,7 +124,7 @@ LiveReloadGlobal =
     timeout = setTimeout(failOnTimeout, 1000)
 
     console.log "Connecting to ws://localhost:35729/livereload..."
-    ws = new WebSocket("ws://localhost:35729/livereload")
+    ws = new TheWebSocket("ws://localhost:35729/livereload")
     ws.onerror = =>
       console.log "Web socket error."
       callback('cannot-connect') unless callbackCalled

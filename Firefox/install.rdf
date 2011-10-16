@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>livereload@livereload.com</em:id>
+    <em:type>2</em:type>
+
+    <em:name>LiveReload</em:name>
+    <em:description>LiveReload refreshes a web page when files change.</em:description>
+    <em:version>2.0.0</em:version>
+    <em:creator>Andrey Tarantsov</em:creator>
+    <em:contributor>Nikita Vasilyev</em:contributor>
+    <em:contributor>Stefan Thomas</em:contributor>
+    <em:homepageURL>http://livereload.com/</em:homepageURL>
+
+    <em:iconURL>chrome://livereload/skin/icon_32.png</em:iconURL>
+    <!-- <em:optionsURL>chrome://livereload/content/options.xul</em:optionsURL>	-->
+
+    <em:targetApplication>
+      <Description>
+        <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id> <!-- Firefox -->
+        <em:minVersion>4.0b6pre</em:minVersion>
+        <!-- the fuckers apparantely confused build numbers with major versions -->
+        <em:maxVersion>99.0</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+  </Description>
+</RDF>

@@ -4,6 +4,7 @@ VERSION_FILES = %w(
     src/injected.coffee
     LiveReload.safariextension/Info.plist
     Chrome/LiveReload/manifest.json
+    Firefox/install.rdf
 )
 
 def coffee dst, src
@@ -78,6 +79,34 @@ file 'Chrome/LiveReload/injected.js' => ['interim/injected.js', 'interim/injecte
     concat task.name, *task.prerequisites
 end
 
+file 'Firefox/content/global.js' => ['src/global.coffee'] do |task|
+    coffee task.name, task.prerequisites.first
+end
+file 'Firefox/content/injected.js' => ['src/injected.coffee'] do |task|
+    coffee task.name, task.prerequisites.first
+end
+file 'Firefox/content/firefox.js' => ['src/firefox.coffee'] do |task|
+    coffee task.name, task.prerequisites.first
+end
+
+FIREFOX_SRC = FileList['Firefox/**/*.{js,xul,manifest,rdf,png}']
+FIREFOX_SRC.include %w(Firefox/content/global.js Firefox/content/injected.js Firefox/content/firefox.js)
+
+file "dist/LiveReload-#{version}.xpi" => FIREFOX_SRC do |task|
+end
+
+desc "Build Firefox extension"
+task :firefox => FIREFOX_SRC do |task|
+    dest = "dist/LiveReload-#{version}.xpi"
+    full_dest = File.expand_path(dest)
+    rm full_dest if File.exists?(full_dest)
+    Dir.chdir 'Firefox' do
+        sh 'zip', full_dest, *task.prerequisites.map { |f| f.sub(%r!^Firefox/!, '') }
+    end
+    sh 'open', '-R', full_dest
+end
+
+
 desc "Embed version number where it belongs"
 task :version do
     ver = version
@@ -103,6 +132,9 @@ task :build => [
     'Chrome/LiveReload/global.js',
     'Chrome/LiveReload/global-chrome.js',
     'Chrome/LiveReload/injected.js',
+    'Firefox/content/global.js',
+    'Firefox/content/injected.js',
+    'Firefox/content/firefox.js',
 ]
 
 desc "Upload the given build to S3"
@@ -111,7 +143,7 @@ task :upload do |t, args|
     require 'highline'
     HighLine.new.choose do |menu|
         menu.prompt = "Please choose a file to upload: "
-        menu.choices(*Dir['dist/*.{crx,safariextz}'].map { |f| File.basename(f) }) do |file|
+        menu.choices(*Dir['dist/*.{crx,safariextz,xpi}'].map { |f| File.basename(f) }) do |file|
             path = "dist/#{file}"
             sh 's3cmd', '-P', 'put', path, "s3://download.livereload.com/#{file}"
             puts "http://download.livereload.com/#{file}"

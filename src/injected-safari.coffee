@@ -1,6 +1,8 @@
 
-LiveReloadInjected.send = (message, data) ->
+LiveReloadInjected::send = (message, data) ->
   safari.self.tab.dispatchMessage message, data
+
+liveReloadInjected = new LiveReloadInjected(document)
 
 safari.self.addEventListener 'message', (event) ->
   # console.log "#{event.name}(#{JSON.stringify(event.message)})"
@@ -8,8 +10,6 @@ safari.self.addEventListener 'message', (event) ->
     when 'alert'
       alert event.message
     when 'enable'
-      LiveReloadInjected.enable(event.message)
+      liveReloadInjected.enable(event.message)
     when 'disable'
-      LiveReloadInjected.disable()
-
-LiveReloadInjected.initialize()
+      liveReloadInjected.disable()
