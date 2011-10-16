@@ -153,7 +153,7 @@ task :upload do |t, args|
     require 'highline'
     HighLine.new.choose do |menu|
         menu.prompt = "Please choose a file to upload: "
-        menu.choices(*Dir['dist/*.{crx,safariextz,xpi}'].map { |f| File.basename(f) }) do |file|
+        menu.choices(*Dir['dist/*.{crx,safariextz,xpi}'].sort.map { |f| File.basename(f) }) do |file|
             path = "dist/#{file}"
             sh 's3cmd', '-P', 'put', path, "s3://download.livereload.com/#{file}"
             puts "http://download.livereload.com/#{file}"
