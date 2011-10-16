@@ -24,13 +24,11 @@ class TabState
     @enabled = no
     @active  = no
 
-  isAlive: -> !!@tab.url
-
   enable: (useFallback) ->
-    @tab.page.dispatchMessage 'enable', { useFallback, baseURI: safari.extension.baseURI }
+    @send 'enable', { useFallback, baseURI: safari.extension.baseURI }
 
   disable: ->
-    @tab.page.dispatchMessage 'disable'
+    @send 'disable'
 
   updateStatus: (status) ->
     if status.enabled?
@@ -48,7 +46,7 @@ class TabState
         Status.disabled
 
   alert: (message) ->
-    @tab.page.dispatchMessage 'alert', message
+    @send 'alert', message
 
 
 if navigator.userAgent.match(/Mac OS X/)
@@ -56,7 +54,7 @@ if navigator.userAgent.match(/Mac OS X/)
 else
   CannotConnectAlert = """Could not connect to LiveReload server. Please make sure that a compatible LiveReload server is running. (We recommand guard-livereload, until LiveReload 2 comes to your platform.)"""
 
-LiveReload =
+LiveReloadGlobal =
   _tabs: []
 
   killZombieTabs: ->
@@ -72,11 +70,7 @@ LiveReload =
     else
       null
 
-  isAvailable: (tab) ->
-    !!tab.url
-
   toggle: (tab) ->
-    console.log "toggle"
     if @isAvailable(tab)
       state = @findState(tab, yes)
       if state.enabled
@@ -85,10 +79,8 @@ LiveReload =
           @afterDisablingLast()
       else
         if @areAnyTabsEnabled()
-          console.log "enabling 2nd+"
           state.enable(@useFallback)
         else
-          console.log "before 1st"
           @beforeEnablingFirst (err) =>
             if err
               switch err
@@ -111,59 +103,51 @@ LiveReload =
 
   beforeEnablingFirst: (callback) ->
     @useFallback = no
+
     # probe using web sockets
+    callbackCalled = no
+
+    failOnTimeout = ->
+      console.log "Haven't received a handshake reply in time, disconnecting."
+      ws.close()
+    timeout = setTimeout(failOnTimeout, 1000)
+
+    console.log "Connecting to ws://localhost:35729/livereload..."
     ws = new WebSocket("ws://localhost:35729/livereload")
     ws.onerror = =>
-      callback('cannot-connect')
+      console.log "Web socket error."
+      callback('cannot-connect') unless callbackCalled
+      callbackCalled = yes
     ws.onopen = =>
-      ws.send JSON.stringify({ command: 'hello', protocols: 'http://livereload.com/protocols/connection-check-1' })
+      console.log "Web socket connected, sending handshake."
+      ws.send JSON.stringify({ command: 'hello', protocols: ['http://livereload.com/protocols/connection-check-1'] })
+    ws.onclose = ->
+      console.log "Web socket disconnected."
+      callback('cannot-connect') unless callbackCalled
+      callbackCalled = yes
     ws.onmessage = (event) =>
+      clearTimeout(timeout) if timeout
+      timeout = null
+
       console.log "Incoming message: #{event.data}"
       if event.data.match(/^!!/)
         @useFallback = yes
-        callback(null)
+        callback(null) unless callbackCalled
+        callbackCalled = yes
         ws.close()
       else if event.data.match(/^\{/)
         xhr = new XMLHttpRequest()
         xhr.onreadystatechange = =>
           if xhr.readyState is XMLHttpRequest.DONE and xhr.status is 200
             @script = xhr.responseText
-            callback(null)
+            callback(null) unless callbackCalled
+            callbackCalled = yes
         xhr.onerror = (event) =>
-          callback('cannot-download')
+          callback('cannot-download') unless callbackCalled
+          callbackCalled = yes
         xhr.open("GET", "http://localhost:35729/livereload.js", true)
         xhr.send(null)
 
 
   afterDisablingLast: ->
 
-
-Commands =
-  toggle:
-    invoke: (event) ->
-      LiveReload.toggle(event.target.browserWindow.activeTab)
-      event.target.validate()
-    validate: (event) ->
-      @toolbarItem = event.target
-      LiveReload.killZombieTabs()
-
-      status = LiveReload.tabStatus(event.target.browserWindow.activeTab)
-      event.target.disabled = !status.buttonEnabled
-      event.target.toolTip  = status.buttonToolTip
-      event.target.image    = safari.extension.baseURI + status.buttonIcon
-
-    revalidate: ->
-      @toolbarItem?.validate()
-
-
-safari.application.addEventListener 'command', (event) ->
-  Commands[event.command]?.invoke?(event)
-
-safari.application.addEventListener 'validate', (event) ->
-  Commands[event.command]?.validate?(event)
-
-safari.application.addEventListener 'message', (event) ->
-  switch event.name
-    when 'status'
-      LiveReload.updateStatus(event.target, event.message)
-      Commands.toggle.revalidate()

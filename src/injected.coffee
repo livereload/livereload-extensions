@@ -22,7 +22,7 @@ CustomEvents =
       throw new Error("Attempt to fire custom event #{eventName} on something which isn't a DOMElement")
 
 
-LiveReload =
+LiveReloadInjected =
   ExtVersion: '2.0.0'
   _hooked: no
 
@@ -33,18 +33,20 @@ LiveReload =
           return element
     null
 
-  disable: (callback) ->
+  doDisable: (callback) ->
     element = @findScriptTag()
     if element
       CustomEvents.fire document, 'LiveReloadShutDown'
       element.parentNode.removeChild(element) if element.parentNode
     callback()
 
-  enable: ({ useFallback, baseURI })->
+  doEnable: ({ useFallback, baseURI })->
     if useFallback
-      url = "#{baseURI}livereload.js?ext=Safari&extver=#{LiveReload.ExtVersion}&host=localhost"
+      url = "#{baseURI}livereload.js?ext=Safari&extver=#{@ExtVersion}&host=localhost"
+      console.log "Loading LiveReload.js bundled with the browser extension..."
     else
-      url = "http://localhost:35729/livereload.js?ext=Safari&extver=#{LiveReload.ExtVersion}"
+      url = "http://localhost:35729/livereload.js?ext=Safari&extver=#{@ExtVersion}"
+      console.log "Loading LiveReload.js from #{url.replace(/\?.*$/, '')}..."
 
     @hook()
     element = document.createElement('script')
@@ -56,22 +58,18 @@ LiveReload =
     @_hooked = yes
 
     CustomEvents.bind document, 'LiveReloadConnect', =>
-      safari.self.tab.dispatchMessage('status', { active: yes })
+      @send 'status', active: yes
     CustomEvents.bind document, 'LiveReloadDisconnect', =>
-      safari.self.tab.dispatchMessage('status', { active: no })
+      @send 'status', active: no
 
+  disable: ->
+    @doDisable =>
+      @send 'status', enabled: no
 
-safari.self.addEventListener 'message', (event) ->
-  # console.log ["LR event #{event.name} ", event.message]
-  switch event.name
-    when 'alert'
-      alert event.message
-    when 'enable'
-      LiveReload.disable ->
-        LiveReload.enable(event.message)
-        safari.self.tab.dispatchMessage('status', { enabled: yes })
-    when 'disable'
-      LiveReload.disable ->
-        safari.self.tab.dispatchMessage('status', { enabled: no })
+  enable: (options) ->
+    @doDisable =>
+      @doEnable options
+      @send 'status', enabled: yes
 
-safari.self.tab.dispatchMessage('status', { enabled: !!LiveReload.findScriptTag() })
+  initialize: ->
+    @send 'status', enabled: !!@findScriptTag()
