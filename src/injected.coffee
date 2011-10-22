@@ -30,10 +30,10 @@ class LiveReloadInjected
     @_hooked = no
 
     if @findScriptTag()
-      @send 'status', enabled: yes, active: yes
+      @send 'status', enabled: yes, active: yes, initial: yes
       @hook()
     else
-      @send 'status', enabled: no, active: no
+      @send 'status', enabled: no, active: no, initial: yes
 
   findScriptTag: ->
     for element in @document.getElementsByTagName('script')

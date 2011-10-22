@@ -24,13 +24,19 @@ class TabState
     @enabled = no
     @active  = no
 
-  enable: (useFallback) ->
-    @send 'enable', { useFallback, scriptURI: @bundledScriptURI() }
+  enable: ->
+    @send 'enable', { @useFallback, scriptURI: @bundledScriptURI() }
 
   disable: ->
     @send 'disable'
 
   updateStatus: (status) ->
+    if status.initial
+      if !status.enabled
+        @active = no
+        if @enabled
+          @enable()
+        return
     if status.enabled?
       @enabled = status.enabled
     if status.active?
@@ -90,7 +96,8 @@ LiveReloadGlobal =
           @afterDisablingLast()
       else
         if @areAnyTabsEnabled()
-          state.enable(@useFallback)
+          state.useFallback = @useFallback
+          state.enable()
         else
           @beforeEnablingFirst (err) =>
             if err
@@ -98,7 +105,8 @@ LiveReloadGlobal =
                 when 'cannot-connect' then state.alert(CannotConnectAlert)
                 when 'cannot-download' then state.alert("Cannot download livereload.js")
             else
-              state.enable(@useFallback)
+              state.useFallback = @useFallback
+              state.enable()
 
   tabStatus: (tab) ->
     unless @isAvailable(tab)
