@@ -28,7 +28,9 @@ class LiveReloadInjected
 
   constructor: (@document, @extName) ->
     @_hooked = no
+    setTimeout((=> @determineInitialState()), 1)
 
+  determineInitialState: ->
     if @findScriptTag()
       @send 'status', enabled: yes, active: yes, initial: yes
       @hook()
