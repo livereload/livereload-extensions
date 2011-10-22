@@ -2,7 +2,7 @@
 LiveReloadInjected::send = (message, data) ->
   safari.self.tab.dispatchMessage message, data
 
-liveReloadInjected = new LiveReloadInjected(document)
+liveReloadInjected = new LiveReloadInjected(document, 'Safari')
 
 safari.self.addEventListener 'message', (event) ->
   # console.log "#{event.name}(#{JSON.stringify(event.message)})"

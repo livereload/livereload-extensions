@@ -26,7 +26,7 @@ ExtVersion = '2.0.2'
 
 class LiveReloadInjected
 
-  constructor: (@document) ->
+  constructor: (@document, @extName) ->
     @_hooked = no
 
     if @findScriptTag()
@@ -51,10 +51,10 @@ class LiveReloadInjected
 
   doEnable: ({ useFallback, scriptURI })->
     if useFallback
-      url = "#{scriptURI}?ext=Safari&extver=#{ExtVersion}&host=localhost"
+      url = "#{scriptURI}?ext=#{@extName}&extver=#{ExtVersion}&host=localhost"
       console.log "Loading LiveReload.js bundled with the browser extension..."
     else
-      url = "http://localhost:35729/livereload.js?ext=Safari&extver=#{ExtVersion}"
+      url = "http://localhost:35729/livereload.js?ext=#{@extName}&extver=#{ExtVersion}"
       console.log "Loading LiveReload.js from #{url.replace(/\?.*$/, '')}..."
 
     @hook()
