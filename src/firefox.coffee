@@ -11,7 +11,7 @@ findTabByContentDocument = (doc) ->
 LiveReloadInjected::send = (eventName, data) ->
   tab = findTabByContentDocument(@document)
   unless tab
-    alert "Cannot find tab for document #{@document.location.href}"
+    # TODO: we're inside an (I)FRAME. Is any special treatment needed?
     return
 
   switch eventName
