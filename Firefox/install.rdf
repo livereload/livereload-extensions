@@ -6,7 +6,7 @@
 
     <em:name>LiveReload</em:name>
     <em:description>LiveReload refreshes a web page when files change.</em:description>
-    <em:version>2.0.2</em:version>
+    <em:version>2.0.3</em:version>
     <em:creator>Andrey Tarantsov</em:creator>
     <em:contributor>Nikita Vasilyev</em:contributor>
     <em:contributor>Stefan Thomas</em:contributor>
