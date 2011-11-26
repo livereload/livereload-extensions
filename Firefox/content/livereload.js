@@ -1,5 +1,5 @@
 (function() {
-var __customevents = {}, __protocol = {}, __connector = {}, __timer = {}, __options = {}, __reloader = {}, __livereload = {}, __startup = {};
+var __customevents = {}, __protocol = {}, __connector = {}, __timer = {}, __options = {}, __reloader = {}, __livereload = {}, __less = {}, __startup = {};
 
 // customevents
 var CustomEvents;
@@ -126,7 +126,7 @@ __protocol.Parser = Parser = (function() {
 var Connector, PROTOCOL_6, PROTOCOL_7, Parser, Version, _ref;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 _ref = __protocol, Parser = _ref.Parser, PROTOCOL_6 = _ref.PROTOCOL_6, PROTOCOL_7 = _ref.PROTOCOL_7;
-Version = '2.0.1';
+Version = '2.0.3';
 __connector.Connector = Connector = (function() {
   function Connector(options, WebSocket, Timer, handlers) {
     this.options = options;
@@ -136,8 +136,10 @@ __connector.Connector = Connector = (function() {
     this._uri = "ws://" + this.options.host + ":" + this.options.port + "/livereload";
     this._nextDelay = this.options.mindelay;
     this._connectionDesired = false;
+    this.protocol = 0;
     this.protocolParser = new Parser({
       connected: __bind(function(protocol) {
+        this.protocol = protocol;
         this._handshakeTimeout.stop();
         this._nextDelay = this.options.mindelay;
         this._disconnectionReason = 'broken';
@@ -248,6 +250,7 @@ __connector.Connector = Connector = (function() {
     return this._handshakeTimeout.start(this.options.handshake_timeout);
   };
   Connector.prototype._onclose = function(e) {
+    this.protocol = 0;
     this.handlers.disconnected(this._disconnectionReason, this._nextDelay);
     return this._scheduleReconnection();
   };
@@ -435,17 +438,28 @@ __reloader.Reloader = Reloader = (function() {
     this.document = this.window.document;
     this.stylesheetGracePeriod = 200;
     this.importCacheWaitPeriod = 200;
+    this.plugins = [];
   }
+  Reloader.prototype.addPlugin = function(plugin) {
+    return this.plugins.push(plugin);
+  };
+  Reloader.prototype.analyze = function(callback) {
+    return results;
+  };
   Reloader.prototype.reload = function(path, options) {
+    var plugin, _i, _len, _ref;
+    _ref = this.plugins;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      plugin = _ref[_i];
+      if (plugin.reload && plugin.reload(path, options)) {
+        return;
+      }
+    }
     if (options.liveCSS) {
       if (path.match(/\.css$/i)) {
         if (this.reloadStylesheet(path)) {
           return;
         }
-      }
-      if (path.match(/\.less$/i) && this.window.less && this.window.less.refresh) {
-        this.window.less.refresh(true);
-        return;
       }
     }
     if (options.liveImg) {
@@ -536,7 +550,7 @@ __reloader.Reloader = Reloader = (function() {
     }
   };
   Reloader.prototype.reloadStylesheet = function(path) {
-    var imported, link, links, match, _i, _j, _len, _len2;
+    var imported, link, links, match, style, _i, _j, _k, _len, _len2, _len3, _ref;
     links = (function() {
       var _i, _len, _ref, _results;
       _ref = this.document.getElementsByTagName('link');
@@ -550,8 +564,15 @@ __reloader.Reloader = Reloader = (function() {
       return _results;
     }).call(this);
     imported = [];
-    for (_i = 0, _len = links.length; _i < _len; _i++) {
-      link = links[_i];
+    _ref = this.document.getElementsByTagName('style');
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      style = _ref[_i];
+      if (style.sheet) {
+        this.collectImportedStylesheets(style, style.sheet, imported);
+      }
+    }
+    for (_j = 0, _len2 = links.length; _j < _len2; _j++) {
+      link = links[_j];
       this.collectImportedStylesheets(link, link.sheet, imported);
     }
     this.console.log("LiveReload found " + links.length + " LINKed stylesheets, " + imported.length + " @imported stylesheets");
@@ -568,8 +589,8 @@ __reloader.Reloader = Reloader = (function() {
       }
     } else {
       this.console.log("LiveReload will reload all stylesheets because path '" + path + "' did not match any specific one");
-      for (_j = 0, _len2 = links.length; _j < _len2; _j++) {
-        link = links[_j];
+      for (_k = 0, _len3 = links.length; _k < _len3; _k++) {
+        link = links[_k];
         this.reattachStylesheetLink(link);
       }
     }
@@ -694,6 +715,8 @@ __livereload.LiveReload = LiveReload = (function() {
   function LiveReload(window) {
     this.window = window;
     this.listeners = {};
+    this.plugins = [];
+    this.pluginIdentifiers = {};
     this.console = this.window.console && this.window.console.log && this.window.console.error ? this.window.console : {
       log: function() {},
       error: function() {}
@@ -715,7 +738,8 @@ __livereload.LiveReload = LiveReload = (function() {
         if (typeof (_base = this.listeners).connect === "function") {
           _base.connect();
         }
-        return this.log("LiveReload is connected to " + this.options.host + ":" + this.options.port + " (protocol v" + protocol + ").");
+        this.log("LiveReload is connected to " + this.options.host + ":" + this.options.port + " (protocol v" + protocol + ").");
+        return this.analyze();
       }, this),
       error: __bind(function(e) {
         if (e instanceof ProtocolError) {
@@ -767,7 +791,8 @@ __livereload.LiveReload = LiveReload = (function() {
     this.log("LiveReload received reload request for " + message.path + ".");
     return this.reloader.reload(message.path, {
       liveCSS: (_ref = message.liveCSS) != null ? _ref : true,
-      liveImg: (_ref2 = message.liveImg) != null ? _ref2 : true
+      liveImg: (_ref2 = message.liveImg) != null ? _ref2 : true,
+      originalPath: message.originalPath || ''
     });
   };
   LiveReload.prototype.performAlert = function(message) {
@@ -779,13 +804,113 @@ __livereload.LiveReload = LiveReload = (function() {
     this.log("LiveReload disconnected.");
     return typeof (_base = this.listeners).shutdown === "function" ? _base.shutdown() : void 0;
   };
+  LiveReload.prototype.hasPlugin = function(identifier) {
+    return !!this.pluginIdentifiers[identifier];
+  };
+  LiveReload.prototype.addPlugin = function(pluginClass) {
+    var plugin;
+    if (this.hasPlugin(pluginClass.identifier)) {
+      return;
+    }
+    this.pluginIdentifiers[pluginClass.identifier] = true;
+    plugin = new pluginClass(this.window, {
+      _livereload: this,
+      _reloader: this.reloader,
+      _connector: this.connector,
+      console: this.console,
+      Timer: Timer,
+      generateCacheBustUrl: __bind(function(url) {
+        return this.reloader.generateCacheBustUrl(url);
+      }, this)
+    });
+    this.plugins.push(plugin);
+    this.reloader.addPlugin(plugin);
+  };
+  LiveReload.prototype.analyze = function() {
+    var plugin, pluginData, pluginsData, _i, _len, _ref;
+    if (!(this.connector.protocol >= 7)) {
+      return;
+    }
+    pluginsData = {};
+    _ref = this.plugins;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      plugin = _ref[_i];
+      pluginsData[plugin.constructor.identifier] = pluginData = (typeof plugin.analyze === "function" ? plugin.analyze() : void 0) || {};
+      pluginData.version = plugin.constructor.version;
+    }
+    this.connector.sendCommand({
+      command: 'info',
+      plugins: pluginsData,
+      url: this.window.location.href
+    });
+  };
   return LiveReload;
 })();
 
+// less
+var LessPlugin;
+__less = LessPlugin = (function() {
+  LessPlugin.identifier = 'less';
+  LessPlugin.version = '1.0';
+  function LessPlugin(window, host) {
+    this.window = window;
+    this.host = host;
+  }
+  LessPlugin.prototype.reload = function(path, options) {
+    if (this.window.less && this.window.less.refresh) {
+      if (path.match(/\.less$/i)) {
+        return this.reloadLess(path);
+      }
+      if (options.originalPath.match(/\.less$/i)) {
+        return this.reloadLess(options.originalPath);
+      }
+    }
+    return false;
+  };
+  LessPlugin.prototype.reloadLess = function(path) {
+    var link, links, _i, _len;
+    links = (function() {
+      var _i, _len, _ref, _results;
+      _ref = document.getElementsByTagName('link');
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        link = _ref[_i];
+        if (link.href && link.rel === 'stylesheet/less' || (link.rel.match(/stylesheet/) && link.type.match(/^text\/(x-)?less$/))) {
+          _results.push(link);
+        }
+      }
+      return _results;
+    })();
+    if (links.length === 0) {
+      return false;
+    }
+    for (_i = 0, _len = links.length; _i < _len; _i++) {
+      link = links[_i];
+      link.href = this.host.generateCacheBustUrl(link.href);
+    }
+    this.host.console.log("LiveReload is asking LESS to recompile all stylesheets");
+    this.window.less.refresh(true);
+    return true;
+  };
+  LessPlugin.prototype.analyze = function() {
+    return {
+      disable: !!(this.window.less && this.window.less.refresh)
+    };
+  };
+  return LessPlugin;
+})();
+
 // startup
-var CustomEvents, LiveReload;
+var CustomEvents, LiveReload, k, v;
 CustomEvents = __customevents;
 LiveReload = window.LiveReload = new (__livereload.LiveReload)(window);
+for (k in window) {
+  v = window[k];
+  if (k.match(/^LiveReloadPlugin/)) {
+    LiveReload.addPlugin(v);
+  }
+}
+LiveReload.addPlugin(__less);
 LiveReload.on('shutdown', function() {
   return delete window.LiveReload;
 });
