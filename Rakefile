@@ -112,8 +112,9 @@ task :chrome => :build do |task|
     full_pem = File.expand_path('Chrome/LiveReload.pem')
     sh '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
         "--pack-extension=#{full_ext}", "--pack-extension-key=#{full_pem}"
-    mv "Chrome/LiveReload.crx", "dist/LiveReload-#{version}.crx"
-    sh 'open', '-R', File.expand_path("dist/LiveReload-#{version}.crx")
+    mkdir_p "dist/#{version}"
+    mv "Chrome/LiveReload.crx", "dist/#{version}/LiveReload.crx"
+    sh 'open', '-R', File.expand_path("dist/#{version}/LiveReload.crx")
 end
 
 
@@ -153,7 +154,7 @@ task :upload do |t, args|
     require 'highline'
     HighLine.new.choose do |menu|
         menu.prompt = "Please choose a file to upload: "
-        menu.choices(*Dir['dist/*.{crx,safariextz,xpi}'].sort.map { |f| File.basename(f) }) do |file|
+        menu.choices(*Dir['dist/**/*.{crx,safariextz,xpi}'].sort.map { |f| f[5..-1] }) do |file|
             path = "dist/#{file}"
             sh 's3cmd', '-P', 'put', path, "s3://download.livereload.com/#{file}"
             puts "http://download.livereload.com/#{file}"
