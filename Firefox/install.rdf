@@ -1,27 +1,24 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
-  <Description about="urn:mozilla:install-manifest">
-    <em:id>livereload@livereload.com</em:id>
-    <em:type>2</em:type>
-
-    <em:name>LiveReload</em:name>
-    <em:description>LiveReload refreshes a web page when files change.</em:description>
-    <em:version>2.0.3</em:version>
-    <em:creator>Andrey Tarantsov</em:creator>
+<?xml version="1.0"?>
+<RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+         xmlns:NC="http://home.netscape.com/NC-rdf#"
+         xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <RDF:Description RDF:about="urn:mozilla:install-manifest"
+                   em:id="livereload@livereload.com"
+                   em:type="2"
+                   em:name="LiveReload"
+                   em:description="LiveReload refreshes a web page when files change."
+                   em:version="2.0.3"
+                   em:creator="Andrey Tarantsov"
+                   em:homepageURL="http://livereload.com/"
+                   em:iconURL="chrome://livereload/skin/icon_32.png"
+                   em:updateURL="http://download.livereload.com/LiveReload-Firefox-update.rdf"
+                   em:updateKey="MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCjhoMYiGULyJeyg7+QhaJJLQPNgB22AFYycTPd2HfTUVfN2gFXLTL0yhSlP+idl6DV0V7GZdScBXNHOhDtXaiMaCTAGjMEBM7bQXuc+7LqQ7MtRdsM9z640+0g6j7445bNVBxrp+enTbUsLttPdLMvN83gptivSmELUt8oBg0H4wIDAQAB">
     <em:contributor>Nikita Vasilyev</em:contributor>
     <em:contributor>Stefan Thomas</em:contributor>
-    <em:homepageURL>http://livereload.com/</em:homepageURL>
-
-    <em:iconURL>chrome://livereload/skin/icon_32.png</em:iconURL>
-    <!-- <em:optionsURL>chrome://livereload/content/options.xul</em:optionsURL>	-->
-
-    <em:targetApplication>
-      <Description>
-        <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id> <!-- Firefox -->
-        <em:minVersion>4.0b6pre</em:minVersion>
-        <!-- the fuckers apparantely confused build numbers with major versions -->
-        <em:maxVersion>99.0</em:maxVersion>
-      </Description>
-    </em:targetApplication>
-  </Description>
-</RDF>
+    <em:targetApplication RDF:resource="rdf:#$Zcm8w3"/>
+  </RDF:Description>
+  <RDF:Description RDF:about="rdf:#$Zcm8w3"
+                   em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
+                   em:minVersion="4.0b6pre"
+                   em:maxVersion="99.0" />
+</RDF:RDF>
