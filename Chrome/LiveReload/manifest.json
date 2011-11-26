@@ -1,6 +1,6 @@
 {
   "name": "LiveReload",
-  "version": "2.0.2",
+  "version": "2.0.4",
   "background_page": "background.html",
   "content_scripts": [
     {
