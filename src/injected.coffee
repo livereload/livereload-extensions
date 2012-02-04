@@ -28,6 +28,7 @@ class LiveReloadInjected
 
   constructor: (@document, @extName) ->
     @_hooked = no
+    @_verbose = !!@document.window?.location?.href?.match(/LR-verbose/)
     setTimeout((=> @determineInitialState()), 1)
 
   determineInitialState: ->
@@ -54,10 +55,12 @@ class LiveReloadInjected
   doEnable: ({ useFallback, scriptURI })->
     if useFallback
       url = "#{scriptURI}?ext=#{@extName}&extver=#{ExtVersion}&host=localhost"
-      console.log "Loading LiveReload.js bundled with the browser extension..."
+      if @_verbose
+        console.log "Loading LiveReload.js bundled with the browser extension..."
     else
       url = "http://localhost:35729/livereload.js?ext=#{@extName}&extver=#{ExtVersion}"
-      console.log "Loading LiveReload.js from #{url.replace(/\?.*$/, '')}..."
+      if @_verbose
+        console.log "Loading LiveReload.js from #{url.replace(/\?.*$/, '')}..."
 
     @hook()
     element = @document.createElement('script')
