@@ -156,7 +156,8 @@ task :upload do |t, args|
         menu.prompt = "Please choose a file to upload: "
         menu.choices(*Dir['dist/**/*.{crx,safariextz,xpi}'].sort.map { |f| f[5..-1] }) do |file|
             path = "dist/#{file}"
-            sh 's3cmd', '-P', 'put', path, "s3://download.livereload.com/#{file}"
+            # application/x-chrome-extension
+            sh 's3cmd', '-P', '--mime-type=application/octet-stream', 'put', path, "s3://download.livereload.com/#{file}"
             puts "http://download.livereload.com/#{file}"
         end
     end
