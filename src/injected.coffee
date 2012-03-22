@@ -22,7 +22,7 @@ CustomEvents =
     else
       throw new Error("Attempt to fire custom event #{eventName} on something which isn't a DOMElement")
 
-ExtVersion = '2.0.6'
+ExtVersion = '2.0.7'
 
 class LiveReloadInjected
 

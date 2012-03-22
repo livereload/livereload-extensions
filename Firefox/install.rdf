@@ -7,7 +7,7 @@
                    em:type="2"
                    em:name="LiveReload"
                    em:description="LiveReload refreshes a web page when files change."
-                   em:version="2.0.6"
+                   em:version="2.0.7"
                    em:creator="Andrey Tarantsov"
                    em:homepageURL="http://livereload.com/"
                    em:iconURL="chrome://livereload/skin/icon_32.png"
