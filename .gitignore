@@ -3,3 +3,5 @@ Chrome/LiveReload/*.js
 Firefox/content/*.js
 interim/*.js
 /dist
+/update
+/Chrome/*.pem
