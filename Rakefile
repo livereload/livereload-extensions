@@ -98,7 +98,8 @@ end
 
 desc "Build Firefox extension"
 task :firefox => FIREFOX_SRC do |task|
-    dest = "dist/LiveReload-#{version}.xpi"
+    mkdir_p "dist/#{version}"
+    dest = "dist/#{version}/LiveReload-#{version}.xpi"
     full_dest = File.expand_path(dest)
     rm full_dest if File.exists?(full_dest)
     Dir.chdir 'Firefox' do
@@ -117,6 +118,9 @@ task :chrome => :build do |task|
     mv "Chrome/LiveReload.crx", "dist/#{version}/LiveReload.crx"
     sh 'open', '-R', File.expand_path("dist/#{version}/LiveReload.crx")
 end
+
+desc "Build Firefox and Chrome extensions"
+task :all => [:chrome, :firefox]
 
 
 desc "Embed version number where it belongs"
@@ -149,20 +153,42 @@ task :build => [
     'Firefox/content/firefox.js',
 ]
 
-desc "Upload the given build to S3"
-task :upload do |t, args|
+def upload_file file
+    path = "dist/#{file}"
+    # application/x-chrome-extension
+    sh 's3cmd', '-P', '--mime-type=application/octet-stream', 'put', path, "s3://download.livereload.com/#{file}"
+    puts "http://download.livereload.com/#{file}"
+end
+
+desc "Upload the chosen build to S3"
+task 'upload:custom' do |t, args|
     require 'rubygems'
     require 'highline'
     HighLine.new.choose do |menu|
         menu.prompt = "Please choose a file to upload: "
         menu.choices(*Dir['dist/**/*.{crx,safariextz,xpi}'].sort.map { |f| f[5..-1] }) do |file|
-            path = "dist/#{file}"
-            # application/x-chrome-extension
-            sh 's3cmd', '-P', '--mime-type=application/octet-stream', 'put', path, "s3://download.livereload.com/#{file}"
-            puts "http://download.livereload.com/#{file}"
+            upload_file file
         end
     end
 end
+
+desc "Upload the latest Chrome build to S3"
+task 'upload:chrome' do
+    upload_file "#{version}/LiveReload.crx"
+end
+
+desc "Upload the latest Firefox build to S3"
+task 'upload:firefox' do
+    upload_file "#{version}/LiveReload-#{version}.xpi"
+end
+
+desc "Upload the latest Safari build to S3"
+task 'upload:safari' do
+    upload_file "#{version}/LiveReload-#{version}.safariextz"
+end
+
+desc "Upload the latest builds of all extensions to S3"
+task 'upload:all' => ['upload:chrome', 'upload:safari', 'upload:firefox']
 
 desc "Tag the current version"
 task :tag do
