@@ -2,7 +2,7 @@
 LiveReloadInjected::send = (message, data) ->
   chrome.extension.sendRequest [message, data]
 
-liveReloadInjected = new LiveReloadInjected(document, 'Chrome')
+liveReloadInjected = new LiveReloadInjected(document, window, 'Chrome')
 
 chrome.extension.onRequest.addListener ([eventName, data], sender, sendResponse) ->
   # console.log "#{eventName}(#{JSON.stringify(data)})"

@@ -25,7 +25,7 @@ class TabState
     @active  = no
 
   enable: ->
-    @send 'enable', { @useFallback, scriptURI: @bundledScriptURI() }
+    @send 'enable', { @useFallback, scriptURI: @bundledScriptURI(), host: LiveReloadGlobal.host, port: LiveReloadGlobal.port }
 
   disable: ->
     @send 'disable'
@@ -126,13 +126,20 @@ LiveReloadGlobal =
     # probe using web sockets
     callbackCalled = no
 
+    unless @host
+      if navigator.platform.match(/Linux/)
+        @host = '0.0.0.0'
+      else
+        @host = '127.0.0.1'
+    @port = 35729
+
     failOnTimeout = ->
       console.log "Haven't received a handshake reply in time, disconnecting."
       ws.close()
     timeout = setTimeout(failOnTimeout, 1000)
 
-    console.log "Connecting to ws://localhost:35729/livereload..."
-    ws = new TheWebSocket("ws://localhost:35729/livereload")
+    console.log "Connecting to ws://#{@host}:#{@port}/livereload..."
+    ws = new TheWebSocket("ws://#{@host}:#{@port}/livereload")
     ws.onerror = =>
       console.log "Web socket error."
       callback('cannot-connect') unless callbackCalled
@@ -164,7 +171,7 @@ LiveReloadGlobal =
         xhr.onerror = (event) =>
           callback('cannot-download') unless callbackCalled
           callbackCalled = yes
-        xhr.open("GET", "http://localhost:35729/livereload.js", true)
+        xhr.open("GET", "http://#{@host}:#{@port}/livereload.js", true)
         xhr.send(null)
 
 

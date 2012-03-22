@@ -26,9 +26,10 @@ ExtVersion = '2.0.6'
 
 class LiveReloadInjected
 
-  constructor: (@document, @extName) ->
+  constructor: (@document, @window, @extName) ->
     @_hooked = no
-    @_verbose = !!@document.window?.location?.href?.match(/LR-verbose/)
+    @_verbose = !!@window?.location?.href?.match(/LR-verbose/)
+
     setTimeout((=> @determineInitialState()), 1)
 
   determineInitialState: ->
@@ -52,13 +53,13 @@ class LiveReloadInjected
       element.parentNode.removeChild(element) if element.parentNode
     callback()
 
-  doEnable: ({ useFallback, scriptURI })->
+  doEnable: ({ useFallback, scriptURI, @host, @port })->
     if useFallback
-      url = "#{scriptURI}?ext=#{@extName}&extver=#{ExtVersion}&host=localhost"
+      url = "#{scriptURI}?ext=#{@extName}&extver=#{ExtVersion}&host=#{@host}&port=#{@port}"
       if @_verbose
         console.log "Loading LiveReload.js bundled with the browser extension..."
     else
-      url = "http://localhost:35729/livereload.js?ext=#{@extName}&extver=#{ExtVersion}"
+      url = "http://#{@host}:#{@port}/livereload.js?ext=#{@extName}&extver=#{ExtVersion}"
       if @_verbose
         console.log "Loading LiveReload.js from #{url.replace(/\?.*$/, '')}..."
 

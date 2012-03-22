@@ -66,7 +66,7 @@ window.addEventListener 'load', ->
         return if doc?.location?.href is 'about:blank'
         # alert "Page loaded! #{doc?.location?.href}"
 
-        doc.__LiveReload_injected = new LiveReloadInjected(doc, 'Firefox')
+        doc.__LiveReload_injected = new LiveReloadInjected(doc, win, 'Firefox')
 
         win.addEventListener "unload", (event) ->
           doc.__LiveReload_injected = null
