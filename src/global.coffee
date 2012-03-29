@@ -126,11 +126,7 @@ LiveReloadGlobal =
     # probe using web sockets
     callbackCalled = no
 
-    unless @host
-      if navigator.platform.match(/Linux/)
-        @host = '0.0.0.0'
-      else
-        @host = '127.0.0.1'
+    @host = '127.0.0.1'
     @port = 35729
 
     failOnTimeout = ->
