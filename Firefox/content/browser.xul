@@ -10,7 +10,7 @@
         <toolbarbutton id="livereload-button" label="LR" tooltiptext="Enable LiveReload" image="chrome://livereload/skin/IconDisabled.png"  type="button" class="toolbarbutton-1 chromeclass-toolbar-additional" style="-moz-image-region: rect(0, 16px, 16px, 0);"/>
     </toolbarpalette>
 
-    <toolbar id="addon-bar">
+    <toolbar id="nav-bar">
         <toolbarbutton id="livereload-button" label="LR" tooltiptext="Enable LiveReload" image="chrome://livereload/skin/IconDisabled.png"  type="button" class="toolbarbutton-1 chromeclass-toolbar-additional" style="" />
     </toolbar>
 </overlay>
