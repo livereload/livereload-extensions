@@ -153,8 +153,8 @@ task :build => [
     'Firefox/content/firefox.js',
 ]
 
-def upload_file file
-    path = "dist/#{file}"
+def upload_file file, folder='dist'
+    path = "#{folder}/#{file}"
     # application/x-chrome-extension
     sh 's3cmd', '-P', '--mime-type=application/octet-stream', 'put', path, "s3://download.livereload.com/#{file}"
     puts "http://download.livereload.com/#{file}"
@@ -189,6 +189,13 @@ end
 
 desc "Upload the latest builds of all extensions to S3"
 task 'upload:all' => ['upload:chrome', 'upload:safari', 'upload:firefox']
+
+desc "Upload update manifests"
+task 'manifest:upload' do
+    upload_file "LiveReload-Chrome-update.xml",   'update'
+    upload_file "LiveReload-Firefox-update.rdf",  'update'
+    upload_file "LiveReload-Safari-update.plist", 'update'
+end
 
 desc "Tag the current version"
 task :tag do
