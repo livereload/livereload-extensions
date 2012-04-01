@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets" id="LiveReload2.0.1" defaultlocale="en">
+	<name>LiveReload 2.0.1 (Beta)</name>
+	<description>LiveReload refreshes a web page when files change. Please make sure you enable Websockets and LiveReload is running.
+[Beta note] This extension is not as sophisticated as the Chrome/Firefox version; keep your bug reports coming and it might get there.</description>
+  	<author href="http://gavro.nl" email="gabrijel@gavro.nl">Gabrijel Gavranović</author>
+  	<icon src="images/livereload_64.png"/>
+  	<access origin="http://localhost"/>
+  	<access origin="http://localhost:35729"/>
+  	<access origin="http://livereload.com" subdomains="true"/>
+</widget>
