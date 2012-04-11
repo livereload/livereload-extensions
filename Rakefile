@@ -76,6 +76,14 @@ file 'Chrome/LiveReload/global-chrome.js' => ['src/global-chrome.coffee'] do |ta
     coffee task.name, task.prerequisites.first
 end
 
+file 'Chrome/LiveReload/devtools.js' => ['src/devtools.coffee'] do |task|
+    coffee task.name, task.prerequisites.first
+end
+
+file 'Chrome/LiveReload/devtools-chrome.js' => ['src/devtools-chrome.coffee'] do |task|
+    coffee task.name, task.prerequisites.first
+end
+
 file 'Chrome/LiveReload/injected.js' => ['interim/injected.js', 'interim/injected-chrome.js'] do |task|
     concat task.name, *task.prerequisites
 end
@@ -147,6 +155,8 @@ task :build => [
     'LiveReload.safariextension/injected.js',
     'Chrome/LiveReload/global.js',
     'Chrome/LiveReload/global-chrome.js',
+    'Chrome/LiveReload/devtools.js',
+    'Chrome/LiveReload/devtools-chrome.js',
     'Chrome/LiveReload/injected.js',
     'Firefox/content/global.js',
     'Firefox/content/injected.js',
