@@ -54,6 +54,10 @@ class LiveReloadInjected
     callback()
 
   doEnable: ({ useFallback, scriptURI, @host, @port })->
+    # our stuff isn't welcome in CKEditor's editing IFRAME :-)
+    if @document.documentElement?.contentEditable is 'true'
+      return
+
     if useFallback
       url = "#{scriptURI}?ext=#{@extName}&extver=#{ExtVersion}&host=#{@host}&port=#{@port}"
       if @_verbose
