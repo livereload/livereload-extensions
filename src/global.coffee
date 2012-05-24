@@ -58,7 +58,7 @@ class TabState
 if navigator.userAgent.match(/Mac OS X/)
   CannotConnectAlert = """Could not connect to LiveReload server. Please make sure that LiveReload 2 (or another compatible server) is running."""
 else
-  CannotConnectAlert = """Could not connect to LiveReload server. Please make sure that a compatible LiveReload server is running. (We recommand guard-livereload, until LiveReload 2 comes to your platform.)"""
+  CannotConnectAlert = """Could not connect to LiveReload server. Please make sure that a compatible LiveReload server is running. (We recommend guard-livereload, until LiveReload 2 comes to your platform.)"""
 
 
 TheWebSocket = (WebSocket ? MozWebSocket)
