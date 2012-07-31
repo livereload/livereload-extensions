@@ -6,6 +6,8 @@ TabState::bundledScriptURI = -> chrome.extension.getURL('livereload.js')
 
 LiveReloadGlobal.isAvailable = (tab) -> yes
 
+LiveReloadGlobal.initialize()
+
 
 ToggleCommand =
   invoke: ->
@@ -32,3 +34,5 @@ chrome.extension.onRequest.addListener ([eventName, data], sender, sendResponse)
     when 'status'
       LiveReloadGlobal.updateStatus(sender.tab.id, data)
       ToggleCommand.update(sender.tab.id)
+    else
+      LiveReloadGlobal.received(eventName, data)

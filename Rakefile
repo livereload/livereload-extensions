@@ -1,6 +1,7 @@
 require 'rake/clean'
 
 VERSION_FILES = %w(
+    src/global.coffee
     src/injected.coffee
     LiveReload.safariextension/Info.plist
     Chrome/LiveReload/manifest.json
@@ -9,6 +10,10 @@ VERSION_FILES = %w(
 
 def coffee dst, src
     sh 'coffee', '-c', '-b', '-o', File.dirname(dst), src
+end
+
+def browserify dst, src
+    sh 'node_modules/.bin/browserify', src, '-o', dst
 end
 
 def concat dst, *srcs
@@ -45,7 +50,7 @@ end
 
 
 file 'LiveReload.safariextension/global.js' => ['src/global.coffee'] do |task|
-    coffee task.name, task.prerequisites.first
+    browserify task.name, task.prerequisites.first
 end
 
 file 'LiveReload.safariextension/global-safari.js' => ['src/global-safari.coffee'] do |task|
@@ -69,7 +74,7 @@ file 'LiveReload.safariextension/injected.js' => ['interim/injected.js', 'interi
 end
 
 file 'Chrome/LiveReload/global.js' => ['src/global.coffee'] do |task|
-    coffee task.name, task.prerequisites.first
+    browserify task.name, task.prerequisites.first
 end
 
 file 'Chrome/LiveReload/global-chrome.js' => ['src/global-chrome.coffee'] do |task|
@@ -89,7 +94,7 @@ file 'Chrome/LiveReload/injected.js' => ['interim/injected.js', 'interim/injecte
 end
 
 file 'Firefox/content/global.js' => ['src/global.coffee'] do |task|
-    coffee task.name, task.prerequisites.first
+    browserify task.name, task.prerequisites.first
 end
 file 'Firefox/content/injected.js' => ['src/injected.coffee'] do |task|
     coffee task.name, task.prerequisites.first

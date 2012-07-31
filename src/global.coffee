@@ -1,3 +1,6 @@
+LRClient = require 'livereload-client'
+
+ExtVersion = '2.0.9'
 
 Status =
   unavailable:
@@ -67,6 +70,25 @@ TheWebSocket = (WebSocket ? MozWebSocket)
 LiveReloadGlobal =
   _tabs: []
 
+  initialize: ->
+    @host = '127.0.0.1'
+    @port = 35729
+    @client = new LRClient
+      host: @host
+      port: @port
+      supportedProtocols:
+        monitoring: [LRClient.protocols.MONITORING_7]
+        connCheck:  [LRClient.protocols.CONN_CHECK_1]
+        saving:     [LRClient.protocols.SAVING_1]
+
+      WebSocket: TheWebSocket
+
+      id: 'com.livereload.extension.chrome'
+      name: 'Chrome extension'
+      version: ExtVersion
+    @client.open()
+
+
   killZombieTabs: ->
     @_tabs = (tabState for tabState in @_tabs when @isAvailable(tabState.tab))
 
@@ -126,9 +148,6 @@ LiveReloadGlobal =
     # probe using web sockets
     callbackCalled = no
 
-    @host = '127.0.0.1'
-    @port = 35729
-
     failOnTimeout = ->
       console.log "Haven't received a handshake reply in time, disconnecting."
       ws.close()
@@ -173,3 +192,31 @@ LiveReloadGlobal =
 
   afterDisablingLast: ->
 
+
+  received: (eventName, data) ->
+    if func = @["on #{eventName}"]
+      func.call(this, data)
+
+  'on resourceAdded': ({ url }) ->
+    console.log "Resource added: #{url}"
+    if @client.connected
+      if @client.negotiatedProtocols?.connCheck >= 1
+        @client.send { command: "presave", url }
+      else
+        console.log "Saving protocol not supported."
+    else
+      @client.open()
+
+  'on resourceUpdated': ({ url, content }) ->
+    console.log "Resource updated: #{url}"
+    if @client.connected
+      if @client.negotiatedProtocols?.connCheck >= 1
+        @client.send { command: "save", url, content }
+      else
+        console.log "Saving protocol not supported."
+    else
+      @client.open()
+
+
+window.TabState = TabState
+window.LiveReloadGlobal = LiveReloadGlobal

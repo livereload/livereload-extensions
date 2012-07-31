@@ -1,3 +1,4 @@
+{ TabState, LiveReloadGlobal } = require './global'
 
 TabState::send = (message, data={}) ->
   @tab.page.dispatchMessage message, data
@@ -5,6 +6,8 @@ TabState::send = (message, data={}) ->
 TabState::bundledScriptURI = -> safari.extension.baseURI + 'livereload.js'
 
 LiveReloadGlobal.isAvailable = (tab) -> !!tab.url
+
+LiveReloadGlobal.initialize()
 
 
 Commands =

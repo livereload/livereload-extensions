@@ -38,6 +38,8 @@ TabState::bundledScriptURI = -> 'chrome://livereload/content/livereload.js'
 
 LiveReloadGlobal.isAvailable = (tab) -> yes
 
+LiveReloadGlobal.initialize()
+
 
 ToggleButton =
   initialize: ->
