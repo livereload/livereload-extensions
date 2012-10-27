@@ -4,5 +4,5 @@ Chrome/LiveReload/*.js
 Firefox/content/*.js
 interim/*.js
 /dist
-/update
+/update/McCoy
 /Chrome/*.pem

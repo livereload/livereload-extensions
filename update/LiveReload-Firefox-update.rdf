@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+         xmlns:NC="http://home.netscape.com/NC-rdf#"
+         xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <RDF:Description RDF:about="rdf:#$3dm8w3"
+                   em:version="2.0.8">
+    <em:targetApplication RDF:resource="rdf:#$6dm8w3"/>
+  </RDF:Description>
+  <RDF:Description RDF:about="rdf:#$6dm8w3"
+                   em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
+                   em:minVersion="4.0b6pre"
+                   em:maxVersion="99.0.*"
+                   em:updateLink="http://download.livereload.com/2.0.8/LiveReload-2.0.8.xpi"
+                   em:updateHash="sha1:3912b78178085f939475cbdb818b58fa8c61270d" />
+  <RDF:Description RDF:about="urn:mozilla:extension:livereload@livereload.com"
+                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAC99Cl+HTMhB07wR6ejmqsBfVAuMxW6dFQQRvQdJRoKb/jOcicBrC2bhhy7rL0BMUmosA56fgmnly+/dn3BpsHdI1rgMVuhCkk9/fh6TNK+uzPpXYcKoYLx9QeTKcE9mfvonwXU4gUCT9Yw3JxoVTH1I4ax01UvPuof+0R/8fq4m">
+    <em:updates RDF:resource="rdf:#$2dm8w3"/>
+  </RDF:Description>
+  <RDF:Seq RDF:about="rdf:#$2dm8w3">
+    <RDF:li RDF:resource="rdf:#$3dm8w3"/>
+  </RDF:Seq>
+  <RDF:Description RDF:about="urn:mozilla:install-manifest"
+                   em:updateKey="MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCjhoMYiGULyJeyg7+QhaJJLQPNgB22AFYycTPd2HfTUVfN2gFXLTL0yhSlP+idl6DV0V7GZdScBXNHOhDtXaiMaCTAGjMEBM7bQXuc+7LqQ7MtRdsM9z640+0g6j7445bNVBxrp+enTbUsLttPdLMvN83gptivSmELUt8oBg0H4wIDAQAB" />
+</RDF:RDF>
