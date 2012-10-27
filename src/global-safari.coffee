@@ -1,4 +1,4 @@
-{ TabState, LiveReloadGlobal } = require './global'
+# { TabState, LiveReloadGlobal } = require './global'
 
 TabState::send = (message, data={}) ->
   @tab.page.dispatchMessage message, data
