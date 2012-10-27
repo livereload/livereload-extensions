@@ -125,11 +125,23 @@ desc "Pack Chrome extension"
 task :chrome => :build do |task|
     full_ext = File.expand_path('Chrome/LiveReload')
     full_pem = File.expand_path('Chrome/LiveReload.pem')
-    sh '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    sh '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',
         "--pack-extension=#{full_ext}", "--pack-extension-key=#{full_pem}"
     mkdir_p "dist/#{version}"
     mv "Chrome/LiveReload.crx", "dist/#{version}/LiveReload.crx"
     sh 'open', '-R', File.expand_path("dist/#{version}/LiveReload.crx")
+end
+
+desc "Zip Chrome extension for the Chrome Web Store"
+task :chromezip => :build do |task|
+    mkdir_p "dist/#{version}"
+    dest = "dist/#{version}/LiveReload-#{version}-ChromeWebStore.zip"
+    full_dest = File.expand_path(dest)
+    rm full_dest if File.exists?(full_dest)
+    Dir.chdir 'Chrome' do
+        sh 'zip', '-r', full_dest, 'LiveReload'
+    end
+    sh 'open', '-R', full_dest
 end
 
 desc "Build Firefox and Chrome extensions"
