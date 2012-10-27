@@ -8,7 +8,7 @@
     "url": "git://github.com/livereload/livereload-extensions.git"
   },
   "dependencies": {
-    "livereload-client": "~0.2.0"
+    "livereload-client": "=0.1.1"
   },
   "devDependencies": {
     "browserify": "~1.13.0"
