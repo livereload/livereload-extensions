@@ -218,7 +218,7 @@ desc "Upload the latest builds of all extensions to S3"
 task 'upload:all' => ['upload:chrome', 'upload:safari', 'upload:firefox']
 
 desc "Upload update manifests"
-task 'manifest:upload' do
+task 'upload:manifest' do
     upload_file "LiveReload-Chrome-update.xml",   'update'
     upload_file "LiveReload-Firefox-update.rdf",  'update'
     upload_file "LiveReload-Safari-update.plist", 'update'
