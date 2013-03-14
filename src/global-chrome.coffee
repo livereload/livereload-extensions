@@ -18,7 +18,10 @@ ToggleCommand =
 
 
 chrome.browserAction.onClicked.addListener (tab) ->
-  LiveReloadGlobal.toggle(tab.id)
+  matches = tab.url.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i)
+  domain = matches && matches[1]
+  domain = domain.split(':')[0]
+  LiveReloadGlobal.toggle(tab.id, domain)
   ToggleCommand.update(tab.id)
 
 chrome.tabs.onSelectionChanged.addListener (tabId, selectInfo) ->
