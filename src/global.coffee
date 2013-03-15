@@ -23,13 +23,13 @@ Status =
 
 
 class TabState
-  constructor: (@tab) ->
+  constructor: (@tab, @host) ->
     @enabled = no
     @active  = no
 
   enable: (host) ->
-    host = host || LiveReloadGlobal.host
-    @send 'enable', { @useFallback, scriptURI: @bundledScriptURI(), host: host, port: LiveReloadGlobal.port }
+    @host = @host || LiveReloadGlobal.host
+    @send 'enable', { @useFallback, scriptURI: @bundledScriptURI(), host: @host, port: LiveReloadGlobal.port }
 
   disable: ->
     @send 'disable'
@@ -100,11 +100,11 @@ LiveReloadGlobal =
         return
     return
 
-  findState: (tab, create=no) ->
+  findState: (tab, create=no, host=no) ->
     for tabState in @_tabs
       return tabState if tabState.tab is tab
     if create
-      state = new TabState(tab)
+      state = new TabState(tab, host)
       @_tabs.push state
       state
     else
@@ -112,7 +112,7 @@ LiveReloadGlobal =
 
   toggle: (tab, host) ->
     if @isAvailable(tab)
-      state = @findState(tab, yes)
+      state = @findState(tab, yes, host)
       if state.enabled
         state.disable()
         unless @areAnyTabsEnabled()
@@ -137,8 +137,8 @@ LiveReloadGlobal =
       return Status.unavailable
     @findState(tab)?.status() || Status.disabled
 
-  updateStatus: (tab, status) ->
-    @findState(tab, yes).updateStatus(status)
+  updateStatus: (tab, status, host) ->
+    @findState(tab, yes, host).updateStatus(status)
 
   areAnyTabsEnabled: ->
     return yes for tabState in @_tabs when tabState.enabled
