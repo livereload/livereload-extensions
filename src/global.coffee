@@ -23,12 +23,13 @@ Status =
 
 
 class TabState
-  constructor: (@tab) ->
+  constructor: (@tab, @host) ->
     @enabled = no
     @active  = no
 
-  enable: ->
-    @send 'enable', { @useFallback, scriptURI: @bundledScriptURI(), host: LiveReloadGlobal.host, port: LiveReloadGlobal.port }
+  enable: (host) ->
+    @host = @host || LiveReloadGlobal.host
+    @send 'enable', { @useFallback, scriptURI: @bundledScriptURI(), host: @host, port: LiveReloadGlobal.port }
 
   disable: ->
     @send 'disable'
@@ -99,19 +100,19 @@ LiveReloadGlobal =
         return
     return
 
-  findState: (tab, create=no) ->
+  findState: (tab, create=no, host=no) ->
     for tabState in @_tabs
       return tabState if tabState.tab is tab
     if create
-      state = new TabState(tab)
+      state = new TabState(tab, host)
       @_tabs.push state
       state
     else
       null
 
-  toggle: (tab) ->
+  toggle: (tab, host) ->
     if @isAvailable(tab)
-      state = @findState(tab, yes)
+      state = @findState(tab, yes, host)
       if state.enabled
         state.disable()
         unless @areAnyTabsEnabled()
@@ -121,29 +122,31 @@ LiveReloadGlobal =
           state.useFallback = @useFallback
           state.enable()
         else
-          @beforeEnablingFirst (err) =>
+          @beforeEnablingFirst((err) =>
             if err
               switch err
                 when 'cannot-connect' then state.alert(CannotConnectAlert)
                 when 'cannot-download' then state.alert("Cannot download livereload.js")
             else
               state.useFallback = @useFallback
-              state.enable()
+              state.enable(host)
+          host)
 
   tabStatus: (tab) ->
     unless @isAvailable(tab)
       return Status.unavailable
     @findState(tab)?.status() || Status.disabled
 
-  updateStatus: (tab, status) ->
-    @findState(tab, yes).updateStatus(status)
+  updateStatus: (tab, status, host) ->
+    @findState(tab, yes, host).updateStatus(status)
 
   areAnyTabsEnabled: ->
     return yes for tabState in @_tabs when tabState.enabled
     no
 
-  beforeEnablingFirst: (callback) ->
+  beforeEnablingFirst: (callback, host = no) ->
     @useFallback = no
+    host = host || @host
 
     # probe using web sockets
     callbackCalled = no
@@ -153,8 +156,8 @@ LiveReloadGlobal =
       ws.close()
     timeout = setTimeout(failOnTimeout, 1000)
 
-    console.log "Connecting to ws://#{@host}:#{@port}/livereload..."
-    ws = new TheWebSocket("ws://#{@host}:#{@port}/livereload")
+    console.log "Connecting to ws://#{host}:#{@port}/livereload..."
+    ws = new TheWebSocket("ws://#{host}:#{@port}/livereload")
     ws.onerror = =>
       console.log "Web socket error."
       callback('cannot-connect') unless callbackCalled
@@ -186,7 +189,7 @@ LiveReloadGlobal =
         xhr.onerror = (event) =>
           callback('cannot-download') unless callbackCalled
           callbackCalled = yes
-        xhr.open("GET", "http://#{@host}:#{@port}/livereload.js", true)
+        xhr.open("GET", "http://#{host}:#{@port}/livereload.js", true)
         xhr.send(null)
 
 
