@@ -57,8 +57,10 @@ class LiveReloadInjected
     # our stuff isn't welcome in CKEditor's editing IFRAME :-)
     if @document.documentElement?.contentEditable is 'true'
       return
-
-    if useFallback
+      
+    isSSL = @window.location.protocol is "https:"
+    
+    if useFallback || isSSL
       url = "#{scriptURI}?ext=#{@extName}&extver=#{ExtVersion}&host=#{@host}&port=#{@port}"
       if @_verbose
         console.log "Loading LiveReload.js bundled with the browser extension..."
