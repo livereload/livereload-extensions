@@ -1,8 +1,8 @@
 
 TabState::send = (message, data={}) ->
-  chrome.tabs.sendRequest @tab, [message, data]
+  chrome.tabs.sendMessage @tab, [message, data]
 
-TabState::bundledScriptURI = -> chrome.extension.getURL('livereload.js')
+TabState::bundledScriptURI = -> chrome.runtime.getURL('livereload.js')
 
 LiveReloadGlobal.isAvailable = (tab) -> yes
 
@@ -28,7 +28,7 @@ chrome.tabs.onRemoved.addListener (tabId) ->
   LiveReloadGlobal.killZombieTab tabId
 
 
-chrome.extension.onRequest.addListener ([eventName, data], sender, sendResponse) ->
+chrome.runtime.onMessage.addListener ([eventName, data], sender, sendResponse) ->
   # console.log "#{eventName}(#{JSON.stringify(data)})"
   switch eventName
     when 'status'
