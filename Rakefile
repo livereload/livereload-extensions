@@ -19,7 +19,7 @@ end
 def concat dst, *srcs
     puts 'cat >' +dst
     text = srcs.map { |src| File.read(src).rstrip + "\n" }
-    File.open(dst, 'w') { |f| f.write text }
+    File.open(dst, 'w') { |f| f.puts text }
 end
 
 def version
