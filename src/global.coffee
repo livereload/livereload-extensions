@@ -6,19 +6,27 @@ Status =
   unavailable:
     buttonEnabled: no
     buttonToolTip: 'LiveReload not available on this tab'
-    buttonIcon: 'IconUnavailable.png'
+    buttonIcon:
+        19:'IconUnavailable.png'
+        38:'IconUnavailable@2x.png'
   disabled:
     buttonEnabled: yes
     buttonToolTip: 'Enable LiveReload'
-    buttonIcon: 'IconDisabled.png'
+    buttonIcon:
+        19: 'IconDisabled.png'
+        38: 'IconDisabled@2x.png'
   enabled:
     buttonEnabled: yes
     buttonToolTip: 'LiveReload is connecting, click to disable'
-    buttonIcon: 'IconEnabled.png'
+    buttonIcon:
+        19: 'IconEnabled.png'
+        38: 'IconEnabled@2x.png'
   active:
     buttonEnabled: yes
     buttonToolTip: 'LiveReload is connected, click to disable'
-    buttonIcon: 'IconActive.png'
+    buttonIcon:
+        19: 'IconActive.png'
+        38: 'IconActive@2x.png'
 
 
 
