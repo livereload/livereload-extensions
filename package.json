@@ -11,7 +11,8 @@
     "livereload-client": "=0.1.1"
   },
   "devDependencies": {
-    "browserify": "~1.13.0"
+    "browserify": "^8.0.3",
+    "coffeeify": "^1.0.0"
   },
   "optionalDependencies": {},
   "engines": {

@@ -13,7 +13,7 @@ def coffee dst, src
 end
 
 def browserify dst, src
-    sh 'node_modules/.bin/browserify', src, '-o', dst
+    sh 'node_modules/.bin/browserify', '-t', 'coffeeify', src, '-o', dst
 end
 
 def concat dst, *srcs
