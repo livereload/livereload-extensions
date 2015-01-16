@@ -13,7 +13,7 @@ class DevTools
 class ChromeDevTools extends DevTools
 
   send: (message, data) ->
-    chrome.extension.sendRequest [message, data]
+    chrome.runtime.sendMessage [message, data]
 
 
 do ->

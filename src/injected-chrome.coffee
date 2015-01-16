@@ -1,10 +1,10 @@
 
 LiveReloadInjected::send = (message, data) ->
-  chrome.extension.sendRequest [message, data]
+  chrome.runtime.sendMessage [message, data]
 
 liveReloadInjected = new LiveReloadInjected(document, window, 'Chrome')
 
-chrome.extension.onRequest.addListener ([eventName, data], sender, sendResponse) ->
+chrome.runtime.onMessage.addListener ([eventName, data], sender, sendResponse) ->
   # console.log "#{eventName}(#{JSON.stringify(data)})"
   switch eventName
     when 'alert'
