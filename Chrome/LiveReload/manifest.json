@@ -26,6 +26,5 @@
   "browser_action": {
     "default_title": "Enable LiveReload",
     "default_icon": "IconDisabled.png"
-  },
-  "update_url": "http://download.livereload.com/LiveReload-Chrome-update.xml"
+  }
 }
