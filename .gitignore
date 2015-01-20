@@ -2,7 +2,8 @@ node_modules
 LiveReload.safariextension/*.js
 Chrome/LiveReload/*.js
 Firefox/content/*.js
-lib/**.js
+lib/*.js
+lib/*/*.js
 /dist
 /update/McCoy
 /Chrome/*.pem

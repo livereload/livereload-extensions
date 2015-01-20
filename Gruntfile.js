@@ -3,36 +3,32 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
-    coffee: {
-      src: {
-        expand: true,
-        cwd: 'src',
-        src: '**/*.coffee',
-        dest: 'lib',
-        ext: '.js'
-      }
-    },
-
     browserify: {
+      options: {
+        transform: ['coffeeify'],
+        browserifyOptions: {
+          extensions: ['.coffee']
+        }
+      },
       safari: {
         files: {
-          'LiveReload.safariextension/global.js': ['lib/safari/global.js'],
-          'LiveReload.safariextension/injected.js': ['lib/safari/injected.js'],
-          'LiveReload.safariextension/livereload.js': ['lib/livereload-js.js']
+          'LiveReload.safariextension/global.js': ['src/safari/global.coffee'],
+          'LiveReload.safariextension/injected.js': ['src/safari/injected.coffee'],
+          'LiveReload.safariextension/livereload.js': ['src/livereload-js.coffee']
         }
       },
       chrome: {
         files: {
-          'Chrome/LiveReload/global.js': ['lib/chrome/global.js'],
-          'Chrome/LiveReload/injected.js': ['lib/chrome/injected.js'],
-          'Chrome/LiveReload/devtools.js': ['lib/chrome/devtools.js'],
-          'Chrome/LiveReload/livereload.js': ['lib/livereload-js.js']
+          'Chrome/LiveReload/global.js': ['src/chrome/global.coffee'],
+          'Chrome/LiveReload/injected.js': ['src/chrome/injected.coffee'],
+          'Chrome/LiveReload/devtools.js': ['src/chrome/devtools.coffee'],
+          'Chrome/LiveReload/livereload.js': ['src/livereload-js.coffee']
         }
       },
       firefox: {
         files: {
-          'Firefox/content/firefox.js': ['lib/firefox/firefox.js'],
-          'Firefox/content/livereload.js': ['lib/livereload-js.js']
+          'Firefox/content/firefox.js': ['src/firefox/firefox.coffee'],
+          'Firefox/content/livereload.js': ['src/livereload-js.coffee']
         }
       }
     },
@@ -66,11 +62,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-compress');
 
-  grunt.registerTask('build', ['coffee', 'browserify']);
+  grunt.registerTask('build', ['browserify']);
   grunt.registerTask('default', ['build']);
 
-  grunt.registerTask('chrome', ['coffee', 'browserify:chrome', 'compress:chrome']);
-  grunt.registerTask('firefox', ['coffee', 'browserify:firefox', 'compress:firefox']);
+  grunt.registerTask('chrome', ['browserify:chrome', 'compress:chrome']);
+  grunt.registerTask('firefox', ['browserify:firefox', 'compress:firefox']);
   grunt.registerTask('all', ['chrome', 'firefox']);
 
 };
