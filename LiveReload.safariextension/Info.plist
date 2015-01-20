@@ -5,7 +5,7 @@
 	<key>Author</key>
 	<string>Andrey Tarantsov</string>
 	<key>Builder Version</key>
-	<string>8536.26.14</string>
+	<string>10600.2.5</string>
 	<key>CFBundleDisplayName</key>
 	<string>LiveReload</string>
 	<key>CFBundleIdentifier</key>
@@ -50,6 +50,8 @@
 	</dict>
 	<key>Description</key>
 	<string>Browser extension for LiveReload app</string>
+	<key>DeveloperIdentifier</key>
+	<string>D963M2VVCH</string>
 	<key>ExtensionInfoDictionaryVersion</key>
 	<string>1.0</string>
 	<key>Permissions</key>
