@@ -89,3 +89,5 @@ class LiveReloadInjected
     @doDisable =>
       @doEnable options
       @send 'status', enabled: yes
+
+exports.LiveReloadInjected = LiveReloadInjected
