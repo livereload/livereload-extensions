@@ -17,19 +17,22 @@ module.exports = function(grunt) {
       safari: {
         files: {
           'LiveReload.safariextension/global.js': ['lib/safari/global.js'],
-          'LiveReload.safariextension/injected.js': ['lib/safari/injected.js']
+          'LiveReload.safariextension/injected.js': ['lib/safari/injected.js'],
+          'LiveReload.safariextension/livereload.js': ['lib/livereload-js.js']
         }
       },
       chrome: {
         files: {
           'Chrome/LiveReload/global.js': ['lib/chrome/global.js'],
           'Chrome/LiveReload/injected.js': ['lib/chrome/injected.js'],
-          'Chrome/LiveReload/devtools.js': ['lib/chrome/devtools.js']
+          'Chrome/LiveReload/devtools.js': ['lib/chrome/devtools.js'],
+          'Chrome/LiveReload/livereload.js': ['lib/livereload-js.js']
         }
       },
       firefox: {
         files: {
-          'Firefox/content/firefox.js': ['lib/firefox/firefox.js']
+          'Firefox/content/firefox.js': ['lib/firefox/firefox.js'],
+          'Firefox/content/livereload.js': ['lib/livereload-js.js']
         }
       }
     },

@@ -8,7 +8,9 @@
     "type": "git",
     "url": "git://github.com/livereload/livereload-extensions.git"
   },
-  "dependencies": {},
+  "dependencies": {
+    "livereload-js": "^2.2.1"
+  },
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-browserify": "^3.3.0",
