@@ -25,7 +25,7 @@ Build CoffeeScript modules, but don't pack:
 Release checklist
 -----------------
 
-1. Bump version number in `package.json`, commit.
+1. Bump version number in `package.json`, run `rake version`, commit.
 
 1. `grunt all`
 
