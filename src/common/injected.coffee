@@ -22,7 +22,7 @@ CustomEvents =
     else
       throw new Error("Attempt to fire custom event #{eventName} on something which isn't a DOMElement")
 
-ExtVersion = '2.0.9'
+ExtVersion = require('./version')
 
 class LiveReloadInjected
 

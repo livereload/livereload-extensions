@@ -1,29 +1,17 @@
-require 'rake/clean'
-
 VERSION_FILES = %w(
-    src/global.coffee
-    src/injected.coffee
+    src/common/version.coffee
     LiveReload.safariextension/Info.plist
     Chrome/LiveReload/manifest.json
     Firefox/install.rdf
 )
 
-def coffee dst, src
-    sh 'coffee', '-c', '-b', '-o', File.dirname(dst), src
-end
-
-def browserify dst, src
-    sh 'node_modules/.bin/browserify', '-t', 'coffeeify', src, '-o', dst
-end
-
-def concat dst, *srcs
-    puts 'cat >' +dst
-    text = srcs.map { |src| File.read(src).rstrip + "\n" }
-    File.open(dst, 'w') { |f| f.puts text }
-end
-
 def version
-    File.read('VERSION').strip
+    content = File.read('package.json')
+    if content =~ /"version": "(\d+\.\d+\.\d+)"/
+        return $1
+    else
+        raise "Failed to get version info from package.json"
+    end
 end
 
 def subst_version_refs_in_file file, ver
@@ -48,126 +36,12 @@ def subst_version_refs_in_file file, ver
     File.open(file, 'w') { |f| f.write data }
 end
 
-
-file 'LiveReload.safariextension/global.js' => ['src/global.coffee'] do |task|
-    browserify task.name, task.prerequisites.first
-end
-
-file 'LiveReload.safariextension/global-safari.js' => ['src/global-safari.coffee'] do |task|
-    coffee task.name, task.prerequisites.first
-end
-
-file 'interim/injected.js' => ['src/injected.coffee'] do |task|
-    coffee task.name, task.prerequisites.first
-end
-
-file 'interim/injected-safari.js' => ['src/injected-safari.coffee'] do |task|
-    coffee task.name, task.prerequisites.first
-end
-
-file 'interim/injected-chrome.js' => ['src/injected-chrome.coffee'] do |task|
-    coffee task.name, task.prerequisites.first
-end
-
-file 'LiveReload.safariextension/injected.js' => ['interim/injected.js', 'interim/injected-safari.js'] do |task|
-    concat task.name, *task.prerequisites
-end
-
-file 'Chrome/LiveReload/global.js' => ['src/global.coffee'] do |task|
-    browserify task.name, task.prerequisites.first
-end
-
-file 'Chrome/LiveReload/global-chrome.js' => ['src/global-chrome.coffee'] do |task|
-    coffee task.name, task.prerequisites.first
-end
-
-file 'Chrome/LiveReload/devtools.js' => ['src/devtools.coffee'] do |task|
-    coffee task.name, task.prerequisites.first
-end
-
-file 'Chrome/LiveReload/devtools-chrome.js' => ['src/devtools-chrome.coffee'] do |task|
-    coffee task.name, task.prerequisites.first
-end
-
-file 'Chrome/LiveReload/injected.js' => ['interim/injected.js', 'interim/injected-chrome.js'] do |task|
-    concat task.name, *task.prerequisites
-end
-
-file 'Firefox/content/global.js' => ['src/global.coffee'] do |task|
-    browserify task.name, task.prerequisites.first
-end
-file 'Firefox/content/injected.js' => ['src/injected.coffee'] do |task|
-    coffee task.name, task.prerequisites.first
-end
-file 'Firefox/content/firefox.js' => ['src/firefox.coffee'] do |task|
-    coffee task.name, task.prerequisites.first
-end
-
-FIREFOX_SRC = FileList['Firefox/**/*.{js,xul,manifest,rdf,png}']
-FIREFOX_SRC.include %w(Firefox/content/global.js Firefox/content/injected.js Firefox/content/firefox.js)
-
-file "dist/LiveReload-#{version}.xpi" => FIREFOX_SRC do |task|
-end
-
-desc "Build Firefox extension"
-task :firefox => FIREFOX_SRC do |task|
-    mkdir_p "dist/#{version}"
-    dest = "dist/#{version}/LiveReload-#{version}.xpi"
-    full_dest = File.expand_path(dest)
-    rm full_dest if File.exists?(full_dest)
-    Dir.chdir 'Firefox' do
-        sh 'zip', full_dest, *task.prerequisites.map { |f| f.sub(%r!^Firefox/!, '') }
-    end
-    sh 'open', '-R', full_dest
-end
-
-desc "Zip Chrome extension for the Chrome Web Store"
-task :chrome => :build do |task|
-    mkdir_p "dist/#{version}"
-    dest = "dist/#{version}/LiveReload-#{version}-ChromeWebStore.zip"
-    full_dest = File.expand_path(dest)
-    rm full_dest if File.exists?(full_dest)
-    Dir.chdir 'Chrome' do
-        sh 'zip', '-r', full_dest, 'LiveReload'
-    end
-    sh 'open', '-R', full_dest
-end
-
-desc "Build Firefox and Chrome extensions"
-task :all => [:chrome, :firefox]
-
-
 desc "Embed version number where it belongs"
 task :version do
     ver = version
     VERSION_FILES.each { |file| subst_version_refs_in_file(file, ver) }
-    Rake::Task[:build].invoke
 end
 
-desc "Increase version number"
-task :bump do
-    prev = version
-    components = File.read('VERSION').strip.split('.')
-    components[-1] = (components[-1].to_i + 1).to_s
-    File.open('VERSION', 'w') { |f| f.write "#{components.join('.')}\n" }
-    puts "#{prev} => #{version}"
-    Rake::Task[:version].invoke
-end
-
-desc "Build all files"
-task :build => [
-    'LiveReload.safariextension/global.js',
-    'LiveReload.safariextension/global-safari.js',
-    'LiveReload.safariextension/injected.js',
-    'Chrome/LiveReload/global.js',
-    'Chrome/LiveReload/global-chrome.js',
-    'Chrome/LiveReload/devtools.js',
-    'Chrome/LiveReload/devtools-chrome.js',
-    'Chrome/LiveReload/injected.js',
-    'Firefox/content/global.js',
-    'Firefox/content/injected.js',
-    'Firefox/content/firefox.js',
-]
 
 def upload_file file, folder='dist'
     path = "#{folder}/#{file}"
@@ -215,19 +89,3 @@ desc "Move (git tag -f) the tag for the current version"
 task :retag do
     sh 'git', 'tag', '-f', "v#{version}"
 end
-
-task :default => :build
-
-CLEAN.push *[
-    'interim/injected.js',
-    'interim/injected-safari.js',
-    'interim/injected-chrome.js',
-]
-CLOBBER.push *[
-    'LiveReload.safariextension/global.js',
-    'LiveReload.safariextension/global-safari.js',
-    'LiveReload.safariextension/injected.js',
-    'Chrome/LiveReload/global.js',
-    'Chrome/LiveReload/global-chrome.js',
-    'Chrome/LiveReload/injected.js',
-]

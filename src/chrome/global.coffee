@@ -1,3 +1,4 @@
+{ LiveReloadGlobal, TabState } = require('../common/global')
 
 TabState::send = (message, data={}) ->
   chrome.tabs.sendMessage @tab, [message, data]

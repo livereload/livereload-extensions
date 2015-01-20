@@ -1,3 +1,4 @@
+require('../common/devtools')
 
 class DevTools
 

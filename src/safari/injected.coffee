@@ -1,3 +1,4 @@
+{ LiveReloadInjected } = require('../common/injected')
 
 LiveReloadInjected::send = (message, data) ->
   safari.self.tab.dispatchMessage message, data

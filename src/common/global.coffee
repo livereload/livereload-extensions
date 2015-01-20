@@ -1,6 +1,6 @@
 # LRClient = require 'livereload-client'
 
-ExtVersion = '2.0.9'
+ExtVersion = require('./version')
 
 Status =
   unavailable:
@@ -218,5 +218,5 @@ LiveReloadGlobal =
     #   @client.open()
 
 
-window.TabState = TabState
-window.LiveReloadGlobal = LiveReloadGlobal
+exports.TabState = TabState
+exports.LiveReloadGlobal = LiveReloadGlobal

@@ -1,5 +1,7 @@
 # Firefox does not use background/injected content separation, so this file
 # serves the purpose of both global-firefox and injected-firefox.
+{ LiveReloadGlobal, TabState } = require('../common/global')
+{ LiveReloadInjected } = require('../common/injected')
 
 findTabByContentDocument = (doc) ->
   for tab in gBrowser.tabs

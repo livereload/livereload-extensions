@@ -5,7 +5,6 @@
   "background": {
     "scripts": [
       "global.js",
-      "global-chrome.js"
     ]
   },
   "content_scripts": [
