@@ -2,7 +2,7 @@
   "author": "Andrey Tarantsov <andrey@tarantsov.com>",
   "name": "livereload-extensions",
   "description": "LiveReload browser extensions (not meant to be installed; npm is used for dependencies only)",
-  "version": "2.0.9",
+  "version": "2.1.0",
   "private": true,
   "repository": {
     "type": "git",
