@@ -10,11 +10,11 @@
 			<key>Developer Identifier</key>
 			<string>D963M2VVCH</string>
 			<key>CFBundleVersion</key>
-			<string>2.0.9</string>
+			<string>2.1.0</string>
 			<key>CFBundleShortVersionString</key>
-			<string>2.0.9</string>
+			<string>2.1.0</string>
 			<key>URL</key>
-			<string>http://download.livereload.com/2.0.9/LiveReload-2.0.9.safariextz</string>
+			<string>http://download.livereload.com/2.1.0/LiveReload-2.1.0.safariextz</string>
 		</dict>
 	</array>
 </dict>

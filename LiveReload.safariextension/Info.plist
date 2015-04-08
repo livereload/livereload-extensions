@@ -5,7 +5,7 @@
 	<key>Author</key>
 	<string>Andrey Tarantsov</string>
 	<key>Builder Version</key>
-	<string>10600.2.5</string>
+	<string>10600.4.10.7</string>
 	<key>CFBundleDisplayName</key>
 	<string>LiveReload</string>
 	<key>CFBundleIdentifier</key>
