@@ -11,8 +11,7 @@
                    em:creator="Andrey Tarantsov"
                    em:homepageURL="http://livereload.com/"
                    em:iconURL="chrome://livereload/skin/icon_32.png"
-                   em:updateURL="http://download.livereload.com/LiveReload-Firefox-update.rdf"
-                   em:updateKey="MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCjhoMYiGULyJeyg7+QhaJJLQPNgB22AFYycTPd2HfTUVfN2gFXLTL0yhSlP+idl6DV0V7GZdScBXNHOhDtXaiMaCTAGjMEBM7bQXuc+7LqQ7MtRdsM9z640+0g6j7445bNVBxrp+enTbUsLttPdLMvN83gptivSmELUt8oBg0H4wIDAQAB">
+                   em:updateURL="https://s3.amazonaws.com/download.livereload.com/LiveReload-Firefox-update.rdf">
     <em:contributor>Nikita Vasilyev</em:contributor>
     <em:contributor>Stefan Thomas</em:contributor>
     <em:targetApplication RDF:resource="rdf:#$Zcm8w3"/>
