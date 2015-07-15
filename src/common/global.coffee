@@ -75,23 +75,11 @@ LiveReloadGlobal =
   _tabs: []
 
   initialize: ->
-    @host = '127.0.0.1'
-    @port = 35729
-    # @client = new LRClient
-    #   host: @host
-    #   port: @port
-    #   supportedProtocols:
-    #     monitoring: [LRClient.protocols.MONITORING_7]
-    #     connCheck:  [LRClient.protocols.CONN_CHECK_1]
-    #     saving:     [LRClient.protocols.SAVING_1]
-
-    #   WebSocket: TheWebSocket
-
-    #   id: 'com.livereload.extension.chrome'
-    #   name: 'Chrome extension'
-    #   version: ExtVersion
-    # @client.open()
-
+    chrome.storage.sync.get {https: false, hostname: '127.0.0.1', port: '35729'}, (items) =>
+      @host = items.hostname
+      @port = items.port
+      console.debug('Using hostname:', @host)
+      console.debug('Using port:', @port)
 
   killZombieTabs: ->
     @_tabs = (tabState for tabState in @_tabs when @isAvailable(tabState.tab))
@@ -151,47 +139,54 @@ LiveReloadGlobal =
 
     # probe using web sockets
     callbackCalled = no
+    ws = {}
 
     failOnTimeout = ->
       console.log "Haven't received a handshake reply in time, disconnecting."
       ws.close()
     timeout = setTimeout(failOnTimeout, 1000)
 
-    console.log "Connecting to ws://#{@host}:#{@port}/livereload..."
-    ws = new TheWebSocket("ws://#{@host}:#{@port}/livereload")
-    ws.onerror = =>
-      console.log "Web socket error."
-      callback('cannot-connect') unless callbackCalled
-      callbackCalled = yes
-    ws.onopen = =>
-      console.log "Web socket connected, sending handshake."
-      ws.send JSON.stringify({ command: 'hello', protocols: ['http://livereload.com/protocols/connection-check-1'] })
-    ws.onclose = ->
-      console.log "Web socket disconnected."
-      callback('cannot-connect') unless callbackCalled
-      callbackCalled = yes
-    ws.onmessage = (event) =>
-      clearTimeout(timeout) if timeout
-      timeout = null
+    chrome.storage.sync.get {https: false}, (items) =>
+        scheme = if items.https then "wss" else "ws"
+        console.log "Connecting to " + scheme + "://#{@host}:#{@port}/livereload..."
+        ws = new TheWebSocket(scheme + "://#{@host}:#{@port}/livereload")
+        ws.onerror = =>
+          console.log "Web socket error."
+          callback('cannot-connect') unless callbackCalled
+          callbackCalled = yes
+        ws.onopen = =>
+          console.log "Web socket connected, sending handshake."
+          ws.send JSON.stringify({ command: 'hello', protocols: ['http://livereload.com/protocols/connection-check-1'] })
+        ws.onclose = ->
+          console.log "Web socket disconnected."
+          callback('cannot-connect') unless callbackCalled
+          callbackCalled = yes
+        ws.onmessage = (event) =>
+          clearTimeout(timeout) if timeout
+          timeout = null
 
-      console.log "Incoming message: #{event.data}"
-      if event.data.match(/^!!/)
-        @useFallback = yes
-        callback(null) unless callbackCalled
-        callbackCalled = yes
-        ws.close()
-      else if event.data.match(/^\{/)
-        xhr = new XMLHttpRequest()
-        xhr.onreadystatechange = =>
-          if xhr.readyState is XMLHttpRequest.DONE and xhr.status is 200
-            @script = xhr.responseText
+          console.log "Incoming message: #{event.data}"
+          if event.data.match(/^!!/)
+            @useFallback = yes
             callback(null) unless callbackCalled
             callbackCalled = yes
-        xhr.onerror = (event) =>
-          callback('cannot-download') unless callbackCalled
-          callbackCalled = yes
-        xhr.open("GET", "http://#{@host}:#{@port}/livereload.js", true)
-        xhr.send(null)
+            ws.close()
+          else if event.data.match(/^\{/)
+            xhr = new XMLHttpRequest()
+            xhr.onreadystatechange = =>
+              if xhr.readyState is XMLHttpRequest.DONE and xhr.status is 200
+                @script = xhr.responseText
+                callback(null) unless callbackCalled
+                callbackCalled = yes
+            xhr.onerror = (event) =>
+              callback('cannot-download') unless callbackCalled
+              callbackCalled = yes
+            chrome.storage.sync.get {https: false}, (items) =>
+              url = if items.https then "https" else "http"
+              url += "://#{@host}:#{@port}/livereload.js"
+              console.debug('Get livereload.js from', url)
+              xhr.open("GET", url, true)
+              xhr.send(null)
 
 
   afterDisablingLast: ->
