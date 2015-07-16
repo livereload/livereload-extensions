@@ -62,15 +62,24 @@ class LiveReloadInjected
       url = "#{scriptURI}?ext=#{@extName}&extver=#{ExtVersion}&host=#{@host}&port=#{@port}"
       if @_verbose
         console.log "Loading LiveReload.js bundled with the browser extension..."
+      @hook()
+      element = @document.createElement('script')
+      element.src = url
+      @document.body.appendChild(element)
     else
-      url = "http://#{@host}:#{@port}/livereload.js?ext=#{@extName}&extver=#{ExtVersion}"
-      if @_verbose
-        console.log "Loading LiveReload.js from #{url.replace(/\?.*$/, '')}..."
+      chrome.storage.sync.get {https: false}, (items) =>
+        url = if items.https then "https" else "http"
+        url += "://#{@host}:#{@port}/livereload.js?ext=#{@extName}&extver=#{ExtVersion}"
+        console.log('Injecting in page:', url)
+        @hook()
 
-    @hook()
-    element = @document.createElement('script')
-    element.src = url
-    @document.body.appendChild(element)
+        element = @document.createElement('script')
+        element.src = url
+        @document.body.appendChild(element)
+        if @_verbose
+          console.log "Loading LiveReload.js from #{url.replace(/\?.*$/, '')}..."
+
+
 
   hook: ->
     return if @_hooked

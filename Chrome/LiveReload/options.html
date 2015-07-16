@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>LiveReload Options</title>
+  <script src="options.js"></script>
+  <style>
+  body {
+    color: #666;
+  }
+  div.field {
+    width: 100%;
+    overflow: auto;
+  }
+  div.field label {
+    width: 200px;
+    float: left;
+    padding: 10px;
+    font-weight: bold;
+  }
+
+  div.field input {
+    float: left;
+  }
+
+  button {
+    padding: 5px 10px;
+    margin: 10px;
+    margin-left: 0;
+    border: 1px solid #ccc;
+    background: #efefef;
+    font-weight: bold;
+    color: #666;
+    float: left;
+  }
+
+  legend, fieldset {
+    border: 1px solid #ccc;
+    margin: 0;
+  }
+
+  legend {
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+
+  input {
+    padding: 5px;
+  }
+
+  input[type=checkbox] {
+    padding: 5px;
+    margin-left: 0;
+    margin-top: 6px;
+  }
+
+  #status {
+    float: left;
+    padding: 5px 10px;
+    font-style: italic;
+    margin-top: 12px;
+  }
+  </style>
+</head>
+<body>
+  <fieldset>
+    <legend>Connection</legend>
+    <div class="field">
+      <label for="https">HTTPS</label>
+      <input type="checkbox" id="https">
+    </div>
+    <div class="field">
+      <label for="hostname">Hostname</label>
+      <input type="text" id="hostname" name="hostname" placeholder="e.g. 127.0.0.1">
+    </div>
+    <div class="field">
+      <label for="port">Port</label>
+      <input type="text" id="port" name="port" placeholder="e.g. 35729">
+    </div>
+  </fieldset>
+  <button id="save">Save settings</button><div id="status"></div>
+</body>
+</html>
