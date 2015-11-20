@@ -190,7 +190,7 @@ LiveReloadGlobal =
         xhr.onerror = (event) =>
           callback('cannot-download') unless callbackCalled
           callbackCalled = yes
-        xhr.open("GET", "http://#{@host}:#{@port}/livereload.js", true)
+        xhr.open("GET", "//#{@host}:#{@port}/livereload.js", true)
         xhr.send(null)
 
 
