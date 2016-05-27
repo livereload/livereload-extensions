@@ -32,7 +32,7 @@ class TabState
     @active  = no
 
   enable: ->
-    @send 'enable', { @useFallback, scriptURI: @bundledScriptURI(), host: LiveReloadGlobal.host, port: LiveReloadGlobal.port }
+    @send 'enable', { @useFallback, scriptURI: '//' + LiveReloadGlobal.host + ':' + LiveReloadGlobal.port + '/livereload.js', host: LiveReloadGlobal.host, port: LiveReloadGlobal.port }
 
   disable: ->
     @send 'disable'
@@ -125,7 +125,7 @@ LiveReloadGlobal =
           state.useFallback = @useFallback
           state.enable()
         else
-          @beforeEnablingFirst (err) =>
+          @beforeEnablingFirst tab, (err) =>
             if err
               switch err
                 when 'cannot-connect' then state.alert(CannotConnectAlert)
@@ -146,7 +146,7 @@ LiveReloadGlobal =
     return yes for tabState in @_tabs when tabState.enabled
     no
 
-  beforeEnablingFirst: (callback) ->
+  beforeEnablingFirst: (tabId, callback) ->
     @useFallback = no
 
     # probe using web sockets
@@ -158,40 +158,48 @@ LiveReloadGlobal =
     timeout = setTimeout(failOnTimeout, 1000)
 
     console.log "Connecting to ws://#{@host}:#{@port}/livereload..."
-    ws = new TheWebSocket("ws://#{@host}:#{@port}/livereload")
-    ws.onerror = =>
-      console.log "Web socket error."
-      callback('cannot-connect') unless callbackCalled
-      callbackCalled = yes
-    ws.onopen = =>
-      console.log "Web socket connected, sending handshake."
-      ws.send JSON.stringify({ command: 'hello', protocols: ['http://livereload.com/protocols/connection-check-1'] })
-    ws.onclose = ->
-      console.log "Web socket disconnected."
-      callback('cannot-connect') unless callbackCalled
-      callbackCalled = yes
-    ws.onmessage = (event) =>
-      clearTimeout(timeout) if timeout
-      timeout = null
-
-      console.log "Incoming message: #{event.data}"
-      if event.data.match(/^!!/)
-        @useFallback = yes
-        callback(null) unless callbackCalled
+    chrome.tabs.get tabId, (tab) =>
+      isSSL = /https\:/.test(tab.url)
+      if isSSL
+        ws = new TheWebSocket("wss://#{@host}:#{@port}/livereload")
+      else
+        ws = new TheWebSocket("ws://#{@host}:#{@port}/livereload")
+      ws.onerror = =>
+        console.log "Web socket error."
+        callback('cannot-connect') unless callbackCalled
         callbackCalled = yes
-        ws.close()
-      else if event.data.match(/^\{/)
-        xhr = new XMLHttpRequest()
-        xhr.onreadystatechange = =>
-          if xhr.readyState is XMLHttpRequest.DONE and xhr.status is 200
-            @script = xhr.responseText
-            callback(null) unless callbackCalled
-            callbackCalled = yes
-        xhr.onerror = (event) =>
-          callback('cannot-download') unless callbackCalled
+      ws.onopen = =>
+        console.log "Web socket connected, sending handshake."
+        ws.send JSON.stringify({ command: 'hello', protocols: ['http://livereload.com/protocols/connection-check-1'] })
+      ws.onclose = ->
+        console.log "Web socket disconnected."
+        callback('cannot-connect') unless callbackCalled
+        callbackCalled = yes
+      ws.onmessage = (event) =>
+        clearTimeout(timeout) if timeout
+        timeout = null
+
+        console.log "Incoming message: #{event.data}"
+        if event.data.match(/^!!/)
+          @useFallback = yes
+          callback(null) unless callbackCalled
           callbackCalled = yes
-        xhr.open("GET", "http://#{@host}:#{@port}/livereload.js", true)
-        xhr.send(null)
+          ws.close()
+        else if event.data.match(/^\{/)
+          xhr = new XMLHttpRequest()
+          xhr.onreadystatechange = =>
+            if xhr.readyState is XMLHttpRequest.DONE and xhr.status is 200
+              @script = xhr.responseText
+              callback(null) unless callbackCalled
+              callbackCalled = yes
+          xhr.onerror = (event) =>
+            callback('cannot-download') unless callbackCalled
+            callbackCalled = yes
+          if isSSL
+            xhr.open("GET", "https://#{@host}:#{@port}/livereload.js", true)
+          else
+            xhr.open("GET", "http://#{@host}:#{@port}/livereload.js", true)
+          xhr.send(null)
 
 
   afterDisablingLast: ->
