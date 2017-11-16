@@ -1,11 +1,11 @@
 { LiveReloadInjected } = require('../common/injected')
 
 LiveReloadInjected::send = (message, data) ->
-  chrome.runtime.sendMessage [message, data]
+  browser.runtime.sendMessage [message, data]
 
-liveReloadInjected = new LiveReloadInjected(document, window, 'Chrome')
+liveReloadInjected = new LiveReloadInjected(document, window, 'Firefox')
 
-chrome.runtime.onMessage.addListener ([eventName, data], sender, sendResponse) ->
+browser.runtime.onMessage.addListener ([eventName, data], sender, sendResponse) ->
   # console.log "#{eventName}(#{JSON.stringify(data)})"
   switch eventName
     when 'alert'

@@ -11,18 +11,18 @@ class DevTools
     @send 'resourceUpdated', url: resource.url, content: content
 
 
-class ChromeDevTools extends DevTools
+class FirefoxDevTools extends DevTools
 
   send: (message, data) ->
-    chrome.runtime.sendMessage [message, data]
+    firefox.runtime.sendMessage [message, data]
 
 
 do ->
 
-  devTools = new ChromeDevTools()
+  devTools = new FirefoxDevTools()
 
-  chrome.devtools.inspectedWindow.onResourceAdded.addListener (resource) ->
+  firefox.devtools.inspectedWindow.onResourceAdded.addListener (resource) ->
     devTools.resourceAdded(resource)
 
-  chrome.devtools.inspectedWindow.onResourceContentCommitted.addListener (resource, content) ->
+  firefox.devtools.inspectedWindow.onResourceContentCommitted.addListener (resource, content) ->
     devTools.resourceUpdated(resource, content)

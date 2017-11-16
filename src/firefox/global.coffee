@@ -1,9 +1,9 @@
 { LiveReloadGlobal, TabState } = require('../common/global')
 
 TabState::send = (message, data={}) ->
-  chrome.tabs.sendMessage @tab, [message, data]
+  browser.tabs.sendMessage @tab, [message, data]
 
-TabState::bundledScriptURI = -> chrome.runtime.getURL('livereload.js')
+TabState::bundledScriptURI = -> browser.runtime.getURL('livereload.js')
 
 LiveReloadGlobal.isAvailable = (tab) -> yes
 
@@ -14,22 +14,22 @@ ToggleCommand =
   invoke: ->
   update: (tabId) ->
     status = LiveReloadGlobal.tabStatus(tabId)
-    chrome.browserAction.setTitle { tabId, title: status.buttonToolTip }
-    chrome.browserAction.setIcon { tabId, path: { '19' : status.buttonIcon, '38' : status.buttonIconHiRes } }
+    browser.browserAction.setTitle { tabId, title: status.buttonToolTip }
+    browser.browserAction.setIcon { tabId, path: { '19' : status.buttonIcon, '38' : status.buttonIconHiRes } }
 
 
-chrome.browserAction.onClicked.addListener (tab) ->
+browser.browserAction.onClicked.addListener (tab) ->
   LiveReloadGlobal.toggle(tab.id)
   ToggleCommand.update(tab.id)
 
-chrome.tabs.onSelectionChanged.addListener (tabId, selectInfo) ->
+browser.tabs.onSelectionChanged.addListener (tabId, selectInfo) ->
   ToggleCommand.update(tabId)
 
-chrome.tabs.onRemoved.addListener (tabId) ->
+browser.tabs.onRemoved.addListener (tabId) ->
   LiveReloadGlobal.killZombieTab tabId
 
 
-chrome.runtime.onMessage.addListener ([eventName, data], sender, sendResponse) ->
+browser.runtime.onMessage.addListener ([eventName, data], sender, sendResponse) ->
   # console.log "#{eventName}(#{JSON.stringify(data)})"
   switch eventName
     when 'status'

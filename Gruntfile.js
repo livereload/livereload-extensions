@@ -27,8 +27,10 @@ module.exports = function(grunt) {
       },
       firefox: {
         files: {
-          'Firefox/content/firefox.js': ['src/firefox/firefox.coffee'],
-          'Firefox/content/livereload.js': ['src/livereload-js.coffee']
+          'Firefox/LiveReload/global.js': ['src/firefox/global.coffee'],
+          'Firefox/LiveReload/injected.js': ['src/firefox/injected.coffee'],
+          'Firefox/LiveReload/devtools.js': ['src/firefox/devtools.coffee'],
+          'Firefox/LiveReload/livereload.js': ['src/livereload-js.coffee']
         }
       }
     },
