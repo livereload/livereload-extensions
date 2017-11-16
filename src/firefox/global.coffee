@@ -22,7 +22,7 @@ browser.browserAction.onClicked.addListener (tab) ->
   LiveReloadGlobal.toggle(tab.id)
   ToggleCommand.update(tab.id)
 
-browser.tabs.onSelectionChanged.addListener (tabId, selectInfo) ->
+browser.tabs.onActivated.addListener (tabId, selectInfo) ->
   ToggleCommand.update(tabId)
 
 browser.tabs.onRemoved.addListener (tabId) ->
