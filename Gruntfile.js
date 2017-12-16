@@ -27,8 +27,10 @@ module.exports = function(grunt) {
       },
       firefox: {
         files: {
-          'Firefox/content/firefox.js': ['src/firefox/firefox.coffee'],
-          'Firefox/content/livereload.js': ['src/livereload-js.coffee']
+          'Firefox/LiveReload/global.js': ['src/firefox/global.coffee'],
+          'Firefox/LiveReload/injected.js': ['src/firefox/injected.coffee'],
+          'Firefox/LiveReload/devtools.js': ['src/firefox/devtools.coffee'],
+          'Firefox/LiveReload/livereload.js': ['src/livereload-js.coffee']
         }
       }
     },
@@ -48,11 +50,10 @@ module.exports = function(grunt) {
       },
       firefox: {
         options: {
-          archive: 'dist/<%= pkg.version %>/LiveReload-<%= pkg.version %>.xpi',
-          mode: 'zip'
+          archive: 'dist/<%= pkg.version %>/LiveReload-<%= pkg.version %>-Firefox.zip'
         },
         files: [
-          { expand: true, cwd: 'Firefox', src: ['**/*.{js,xul,manifest,rdf,png}'], dest: '/' }
+          { expand: true, cwd: 'Firefox/LiveReload', src: ['**.{json,js,html,png}'], dest: './' }
         ]
       }
     }

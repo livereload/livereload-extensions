@@ -2,7 +2,7 @@ VERSION_FILES = %w(
     src/common/version.coffee
     LiveReload.safariextension/Info.plist
     Chrome/LiveReload/manifest.json
-    Firefox/install.rdf
+    Firefox/LiveReload/manifest.json
 )
 
 def version
@@ -77,7 +77,6 @@ task 'upload:all' => ['upload:safari', 'upload:firefox']
 
 desc "Upload update manifests"
 task 'upload:manifest' do
-    upload_file "LiveReload-Firefox-update.rdf",  'update'
     upload_file "LiveReload-Safari-update.plist", 'update'
 end
 
