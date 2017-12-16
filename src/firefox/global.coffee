@@ -22,8 +22,8 @@ browser.browserAction.onClicked.addListener (tab) ->
   LiveReloadGlobal.toggle(tab.id)
   ToggleCommand.update(tab.id)
 
-browser.tabs.onActivated.addListener (tabId, selectInfo) ->
-  ToggleCommand.update(tabId)
+browser.tabs.onActivated.addListener (activeInfo) ->
+  ToggleCommand.update(activeInfo.tabId)
 
 browser.tabs.onRemoved.addListener (tabId) ->
   LiveReloadGlobal.killZombieTab tabId
