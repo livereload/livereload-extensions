@@ -1,7 +1,7 @@
 /***
  *	Author: Gabrijel Gavranović  // gavro.nl
  *	CustomEvent & LiveReload objects/prototype function taken (and partially adapted) from:
- *  LiveReload Chrome & Firefox extentions, LiveReload.com & Nikita Vasilyev.
+ *  LiveReload Chrome & Firefox extensions, LiveReload.com & Nikita Vasilyev.
  *  See: http://help.livereload.com/kb/general-use/browser-extensions
  ***/
 
