@@ -1,7 +1,7 @@
 /***
  *	Author: Gabrijel Gavranović  // gavro.nl
  *	CustomEvent & LiveReload objects/prototype function taken (and partially adapted) from:
- *  LiveReload Chrome & Firefox extentions, LiveReload.com & Nikita Vasilyev.
+ *  LiveReload Chrome & Firefox extensions, LiveReload.com & Nikita Vasilyev.
  *  See: http://help.livereload.com/kb/general-use/browser-extensions
  ***/
  
@@ -9,7 +9,7 @@
 /***
  * lrdata structure: tabID, status --> We should keep track of closed tab and remove them but can't get the ID
  * of the closed tabs! So let the object fill up, better a larger object instead of a periodical check of 
- * object agains all open tabs with extension.tabs.getAll()....
+ * object against all open tabs with extension.tabs.getAll()....
  ***/
 var lrdata = {}; 
 
